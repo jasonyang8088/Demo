@@ -1,4 +1,4 @@
-package com.zxxk.zss.web;
+package com.zxxk.zss.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
