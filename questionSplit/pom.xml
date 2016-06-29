@@ -71,6 +71,13 @@
 			<optional>true</optional>
 		</dependency>
 		
+		<!-- 文档转化器，利用openOffice/LibreOffice转化 -->
+		<dependency>
+			<groupId>com.artofsolving</groupId>
+			<artifactId>jodconverter</artifactId>
+			<version>2.2.1</version>
+		</dependency>
+		
 	</dependencies>
 
 	<!-- Package as an executable jar -->

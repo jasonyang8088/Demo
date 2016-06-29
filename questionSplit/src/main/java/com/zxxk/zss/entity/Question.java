@@ -22,6 +22,7 @@ public class Question {
 	private Integer pid; 	// 对应材料试题的ID
 	private String difficult;
 	private String fenzhi;
+	private String tihao;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -60,6 +61,18 @@ public class Question {
 	public Integer getPid() {
 		return pid;
 	}
+	
+	public String getDifficult() {
+		return difficult;
+	}
+
+	public String getFenzhi() {
+		return fenzhi;
+	}
+	
+	public String getTihao() {
+		return tihao;
+	}
 
 	public void setQid(Integer qid) {
 		this.qid = qid;
@@ -93,14 +106,6 @@ public class Question {
 		this.pid = pid;
 	}
 
-	public String getDifficult() {
-		return difficult;
-	}
-
-	public String getFenzhi() {
-		return fenzhi;
-	}
-
 	public void setDifficult(String difficult) {
 		this.difficult = difficult;
 	}
@@ -108,5 +113,13 @@ public class Question {
 	public void setFenzhi(String fenzhi) {
 		this.fenzhi = fenzhi;
 	}
+
+
+
+	public void setTihao(String tihao) {
+		this.tihao = tihao;
+	}
+	
+	
 
 }
