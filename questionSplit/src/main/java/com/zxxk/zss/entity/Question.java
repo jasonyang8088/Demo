@@ -20,6 +20,8 @@ public class Question {
 	private String analyse;	// 试题解析
 	private String status; 	// 试题状态
 	private Integer pid; 	// 对应材料试题的ID
+	private String difficult;
+	private String fenzhi;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -89,6 +91,22 @@ public class Question {
 
 	public void setPid(Integer pid) {
 		this.pid = pid;
+	}
+
+	public String getDifficult() {
+		return difficult;
+	}
+
+	public String getFenzhi() {
+		return fenzhi;
+	}
+
+	public void setDifficult(String difficult) {
+		this.difficult = difficult;
+	}
+
+	public void setFenzhi(String fenzhi) {
+		this.fenzhi = fenzhi;
 	}
 
 }
