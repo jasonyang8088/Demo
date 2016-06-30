@@ -2,10 +2,8 @@ package com.zxxk.zss.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.ConnectException;
 import java.net.URLEncoder;
 import java.util.List;
 
@@ -28,8 +26,8 @@ import com.zxxk.zss.entity.Question;
 @RequestMapping("/download")
 public class DownloadController {
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
-	// @ResponseBody
 	public String download(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		
 		List<Question> lstQuestion = (List<Question>) session.getAttribute("lstQuestion");

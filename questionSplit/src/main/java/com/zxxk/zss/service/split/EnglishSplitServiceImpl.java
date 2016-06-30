@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.zxxk.zss.dao.QuestionDAO;
 import com.zxxk.zss.entity.Question;
@@ -21,21 +20,16 @@ import com.zxxk.zss.utils.StringUtil;
 public class EnglishSplitServiceImpl implements SplitService {
 
 	private Logger logger = LoggerFactory.getLogger(EnglishSplitServiceImpl.class);
+	
+	private Question question;
 
 	@Autowired
 	private QuestionDAO questionDao;
 
 	@Override
-	public List<Question> splitQuestion(List<String> lstContent) {
-		// List<Question> lstQuestion = new ArrayList<Question>();
-		// List<Question> lstQuestion1=this.handleYueDu(lstContent);
-		// List<Question> lstQuestion2=this.handleJiChu(lstContent);
-		// List<Question> lstQuestion3=this.handleXieZuo(lstContent);
-		// if(lstQuestion1!=null)lstQuestion.addAll(lstQuestion1);
-		// if(lstQuestion2!=null)lstQuestion.addAll(lstQuestion2);
-		// if(lstQuestion3!=null)lstQuestion.addAll(lstQuestion3);
-		// return lstQuestion;
+	public List<Question> splitQuestion(List<String> lstContent,Question q) throws InstantiationException, IllegalAccessException {
 		logger.info("---拆分大题---");
+		question=q;
 		List<Question> lstQuestion = new ArrayList<Question>();
 		List<TypeAndIndex> lstTI = new ArrayList<TypeAndIndex>();
 		for (int i = 0; i < lstContent.size(); i++) {
@@ -95,7 +89,7 @@ public class EnglishSplitServiceImpl implements SplitService {
 	}
 
 	// 得到阅读的List
-	public List<Question> handleYueDu(List<String> lstContent) {
+	public List<Question> handleYueDu(List<String> lstContent) throws InstantiationException, IllegalAccessException {
 		int beginIndex = 0;
 		int endIndex = 0;
 		for (int i = 0; i < lstContent.size(); i++) {
@@ -117,7 +111,7 @@ public class EnglishSplitServiceImpl implements SplitService {
 	}
 
 	// 得到基础知识应用的List
-	public List<Question> handleJiChu(List<String> lstContent) {
+	public List<Question> handleJiChu(List<String> lstContent) throws InstantiationException, IllegalAccessException {
 		int beginIndex = 0;
 		int endIndex = 0;
 		for (int i = 0; i < lstContent.size(); i++) {
@@ -135,7 +129,7 @@ public class EnglishSplitServiceImpl implements SplitService {
 	}
 
 	// 得到写作的List
-	public List<Question> handleXieZuo(List<String> lstContent) {
+	public List<Question> handleXieZuo(List<String> lstContent) throws InstantiationException, IllegalAccessException {
 		int beginIndex = 0;
 		int endIndex = 0;
 		for (int i = 0; i < lstContent.size(); i++) {
@@ -158,7 +152,7 @@ public class EnglishSplitServiceImpl implements SplitService {
 	}
 
 	// 拆分阅读理解
-	public List<Question> splitYueDu(List<String> lstYueDuContent) {
+	public List<Question> splitYueDu(List<String> lstYueDuContent) throws InstantiationException, IllegalAccessException {
 		int index1 = 0;
 		int index2 = 0;
 		List<Question> lstQuestion = new ArrayList<Question>();
@@ -192,7 +186,7 @@ public class EnglishSplitServiceImpl implements SplitService {
 	}
 
 	// 处理阅读第一节
-	public List<Question> handleYueDu1(List<String> lstYueDuContent) {
+	public List<Question> handleYueDu1(List<String> lstYueDuContent) throws InstantiationException, IllegalAccessException {
 		logger.info("---处理阅读第一节---");
 		int indexA = 0;
 		int indexB = 0;
@@ -247,7 +241,7 @@ public class EnglishSplitServiceImpl implements SplitService {
 	}
 
 	// 处理阅读第二节
-	public List<Question> handleYueDu2(List<String> lstYueDuContent) {
+	public List<Question> handleYueDu2(List<String> lstYueDuContent) throws InstantiationException, IllegalAccessException {
 		logger.info("---处理阅读第二节---");
 		List<Question> lstQuestion = new ArrayList<Question>();
 		String regex = "<(\\S*?)[^>]*>(\t| )*[A][．.、,][\\s\\S]*<(\\S*?)[^>]*>";
@@ -260,7 +254,7 @@ public class EnglishSplitServiceImpl implements SplitService {
 				indexs.add(i);
 			}
 		}
-		Question q = new Question();
+		Question q = question.getClass().newInstance();
 		if (indexs.size() > 2) {
 			logger.debug("--拆分选项错误--拆出：" + indexs.size());
 		} else {
@@ -274,7 +268,7 @@ public class EnglishSplitServiceImpl implements SplitService {
 		return lstQuestion;
 	}
 
-	public List<Question> handleYueDu11(List<String> lstYueDuContent, String sign) {
+	public List<Question> handleYueDu11(List<String> lstYueDuContent, String sign) throws InstantiationException, IllegalAccessException {
 		logger.info("---处理阅读理解" + sign + "篇---");
 		List<Question> lstQuestion = new ArrayList<Question>();
 		String regex = "<(\\S*?)[^>]*>(\t| )*[0-9]{1,2}[．.、,][\\s\\S]*<(\\S*?)[^>]*>";
@@ -289,7 +283,7 @@ public class EnglishSplitServiceImpl implements SplitService {
 			}
 		}
 		// 处理材料
-		Question q = new Question();
+		Question q = question.getClass().newInstance();
 		q.setTihao(sign);
 		q.setType("材料类型");
 		q.setStem(StringUtil.listToString(lstYueDuContent.subList(0, indexs.get(0))));
@@ -297,7 +291,7 @@ public class EnglishSplitServiceImpl implements SplitService {
 		lstQuestion.add(q);
 		// 处理除最后一道小题的小题
 		for (int i = 0; i < indexs.size(); i++) {
-			Question q1 = new Question();
+			Question q1 =question.getClass().newInstance();
 			if (i < indexs.size() - 1) {
 				q1 = this.splitOption(lstYueDuContent.subList(indexs.get(i), indexs.get(i + 1)));
 			} else if (i == indexs.size() - 1) {
@@ -311,7 +305,7 @@ public class EnglishSplitServiceImpl implements SplitService {
 		return lstQuestion;
 	}
 
-	public Question splitOption(List<String> lstContent) {
+	public Question splitOption(List<String> lstContent) throws InstantiationException, IllegalAccessException {
 		logger.info("---拆分小题选项---");
 		String regex = "<(\\S*?)[^>]*>(\t| )*[A][．.、,][\\s\\S]*<(\\S*?)[^>]*>";
 		Pattern p = Pattern.compile(regex);
@@ -323,7 +317,7 @@ public class EnglishSplitServiceImpl implements SplitService {
 				indexs.add(i);
 			}
 		}
-		Question q = new Question();
+		Question q =question.getClass().newInstance();
 		if (indexs.size() > 2) {
 			logger.debug("--拆分选项错误--拆出：" + indexs.size());
 		} else {
@@ -345,7 +339,7 @@ public class EnglishSplitServiceImpl implements SplitService {
 		return null;
 	}
 
-	public List<Question> splitJiChu(List<String> lstJiChu) {
+	public List<Question> splitJiChu(List<String> lstJiChu) throws InstantiationException, IllegalAccessException {
 		logger.info("---拆分基础知识应用---");
 		int index1 = 0;
 		int index2 = 0;
@@ -395,7 +389,7 @@ public class EnglishSplitServiceImpl implements SplitService {
 		return lstQuestion;
 	}
 
-	public List<Question> handleWanXing(List<String> lstWanXing) {
+	public List<Question> handleWanXing(List<String> lstWanXing) throws InstantiationException, IllegalAccessException {
 		logger.info("---处理完形填空---");
 		List<Question> lstQuestion = new ArrayList<Question>();
 		String regex = "<(\\S*?)[^>]*>(\t| )*[0-9]{1,2}[．.、,][\\s\\S]*<(\\S*?)[^>]*>";
@@ -409,14 +403,14 @@ public class EnglishSplitServiceImpl implements SplitService {
 			}
 		}
 		// 处理材料
-		Question q = new Question();
+		Question q = question.getClass().newInstance();
 		q.setType("材料类型");
 		String stem = this.removeTihao(lstWanXing.subList(1, indexs.get(0)));
 		q.setStem(stem);
 		questionDao.save(q);
 		lstQuestion.add(q);
 		for (int i = 0; i < indexs.size(); i++) {
-			Question q1 = new Question();
+			Question q1 =  question.getClass().newInstance();
 			if (i < indexs.size() - 1) {
 				q1.setTihao(this.splitTihao(lstWanXing.get(indexs.get(i))));
 				q1.setOptions(StringUtil.listToString(lstWanXing.subList(indexs.get(i), indexs.get(i + 1))));
@@ -432,10 +426,10 @@ public class EnglishSplitServiceImpl implements SplitService {
 		return lstQuestion;
 	}
 
-	public List<Question> handleYuFa(List<String> lstYuFa) {
+	public List<Question> handleYuFa(List<String> lstYuFa) throws InstantiationException, IllegalAccessException {
 		logger.info("---处理语法填空---");
 		List<Question> lstQuestion = new ArrayList<Question>();
-		Question q = new Question();
+		Question q =  question.getClass().newInstance();
 		q.setType("语法填空");
 		String stem = this.removeTihao(lstYuFa.subList(1, lstYuFa.size()));
 		q.setStem(stem);
@@ -445,7 +439,7 @@ public class EnglishSplitServiceImpl implements SplitService {
 	}
 
 	// 拆分写作
-	public List<Question> splitXieZuo(List<String> lstXieZuo) {
+	public List<Question> splitXieZuo(List<String> lstXieZuo) throws InstantiationException, IllegalAccessException {
 		logger.info("---拆分写作---");
 		List<Question> lstQuestion = new ArrayList<Question>();
 		List<TypeAndIndex> lstTI = new ArrayList<TypeAndIndex>();
@@ -504,7 +498,7 @@ public class EnglishSplitServiceImpl implements SplitService {
 		return lstQuestion;
 	}
 
-	public List<Question> handleDanCi(List<String> lstDanCi) {
+	public List<Question> handleDanCi(List<String> lstDanCi) throws InstantiationException, IllegalAccessException {
 		logger.info("---处理单词填空---");
 		List<Question> lstQuestion = new ArrayList<Question>();
 		String regex = "<(\\S*?)[^>]*>(\t| )*[0-9]{1,2}[．.、,][\\s\\S]*<(\\S*?)[^>]*>";
@@ -519,7 +513,7 @@ public class EnglishSplitServiceImpl implements SplitService {
 		}
 		// 处理除最后一道小题的小题
 		for (int i = 0; i < indexs.size(); i++) {
-			Question q1 = new Question();
+			Question q1 = question.getClass().newInstance();
 			if (i < indexs.size() - 1) {
 				q1.setTihao(this.splitTihao(lstDanCi.get(indexs.get(i))));
 				String stem = this.removeTihao(lstDanCi.subList(indexs.get(i), indexs.get(i + 1)));
@@ -537,7 +531,7 @@ public class EnglishSplitServiceImpl implements SplitService {
 	}
 
 	// 处理句子填空
-	public List<Question> handleJuZi(List<String> lstDanCi) {
+	public List<Question> handleJuZi(List<String> lstDanCi) throws InstantiationException, IllegalAccessException {
 		logger.info("---处理句子填空---");
 		List<Question> lstQuestion = new ArrayList<Question>();
 		String regex = "<(\\S*?)[^>]*>(\t| )*[0-9]{1,2}[．.、,][\\s\\S]*<(\\S*?)[^>]*>";
@@ -552,7 +546,7 @@ public class EnglishSplitServiceImpl implements SplitService {
 		}
 		// 处理除最后一道小题的小题
 		for (int i = 0; i < indexs.size(); i++) {
-			Question q1 = new Question();
+			Question q1 = question.getClass().newInstance();
 			if (i < indexs.size() - 1) {
 				q1.setTihao(this.splitTihao(lstDanCi.get(indexs.get(i))));
 				String stem = this.removeTihao(lstDanCi.subList(indexs.get(i), indexs.get(i + 1)));
@@ -569,10 +563,10 @@ public class EnglishSplitServiceImpl implements SplitService {
 		return lstQuestion;
 	}
 
-	public List<Question> handleDuanWen(List<String> lstDanCi) {
+	public List<Question> handleDuanWen(List<String> lstDanCi) throws InstantiationException, IllegalAccessException {
 		logger.info("---处理短文改错---");
 		List<Question> lstQuestion = new ArrayList<Question>();
-		Question q = new Question();
+		Question q =question.getClass().newInstance();
 		q.setType("短文改错");
 		String stem = this.removeTihao(lstDanCi.subList(1, lstDanCi.size()));
 		q.setStem(stem);
@@ -581,10 +575,10 @@ public class EnglishSplitServiceImpl implements SplitService {
 		return lstQuestion;
 	}
 
-	public List<Question> handleShuMian(List<String> lstShuMian) {
+	public List<Question> handleShuMian(List<String> lstShuMian) throws InstantiationException, IllegalAccessException {
 		logger.info("---处理书面表达---");
 		List<Question> lstQuestion = new ArrayList<Question>();
-		Question q = new Question();
+		Question q = question.getClass().newInstance();
 		q.setType("书面表达");
 		String stem = this.removeTihao(lstShuMian.subList(1, lstShuMian.size()));
 		q.setStem(stem);

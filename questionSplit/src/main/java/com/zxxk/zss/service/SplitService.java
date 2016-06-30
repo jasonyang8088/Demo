@@ -6,6 +6,6 @@ import com.zxxk.zss.entity.Question;
 
 public interface SplitService {
 
-	public List<Question> splitQuestion(List<String> lstContent);
+	public List<Question> splitQuestion(List<String> lstContent,Question q) throws InstantiationException, IllegalAccessException;
 	
 }

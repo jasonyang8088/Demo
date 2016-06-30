@@ -8,8 +8,11 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,12 +21,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.zxxk.zss.entity.Question;
 import com.zxxk.zss.service.SplitService;
+import com.zxxk.zss.service.split.CommonSplitServiceImpl;
+import com.zxxk.zss.utils.QuestionFactory;
 import com.zxxk.zss.utils.SplitFactory;
 import com.zxxk.zss.utils.WordConverter;
 
 @Controller
 @RequestMapping("/fileupload")
 public class FileUploadController {
+	
+	private Logger logger = LoggerFactory.getLogger(CommonSplitServiceImpl.class);
 
 	@Autowired
 	private SplitFactory splitFactory;
@@ -33,7 +40,9 @@ public class FileUploadController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public String processUpload(@RequestParam MultipartFile file, Model model, String subjectName,HttpSession session) throws IOException {
+	@Transactional
+	public String processUpload(@RequestParam MultipartFile file, Model model, String stage,String subjectName,HttpSession session) throws IOException {
+		logger.info("解析上传的试卷");
 		List<Question> lstQuestionFirst = new ArrayList<Question>();
 
 		String content = WordConverter.wordToHtml(file);
@@ -52,9 +61,18 @@ public class FileUploadController {
 		while (m.find()) {
 			lstContent.add(m.group());
 		}
-
+		
 		SplitService splitService = splitFactory.createSplitService(subjectName);
-		lstQuestionFirst = splitService.splitQuestion(lstContent);
+		Question q = QuestionFactory.createQuestion(stage, subjectName);
+		try {
+			lstQuestionFirst = splitService.splitQuestion(lstContent,q);
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		model.addAttribute("lstQuestion", lstQuestionFirst);
 		session.setAttribute("lstQuestion", lstQuestionFirst);
 		return "showQuestion";

@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.zxxk.zss.dao.QuestionDAO;
 import com.zxxk.zss.entity.Question;
@@ -23,10 +22,13 @@ public class CommonSplitServiceImpl implements SplitService {
 
 	@Autowired
 	private QuestionDAO questionDao;
+	
+	private Question question;
 
 	@Override
-	public List<Question> splitQuestion(List<String> lstContent) {
+	public List<Question> splitQuestion(List<String> lstContent,Question q) throws InstantiationException, IllegalAccessException {
 		logger.info("---拆分大题---");
+		question=q;
 		List<Question> lstQuestion = new ArrayList<Question>();
 		List<TypeAndIndex> lstTI = new ArrayList<TypeAndIndex>();
 		for (int i = 0; i < lstContent.size(); i++) {
@@ -107,15 +109,6 @@ public class CommonSplitServiceImpl implements SplitService {
 				} else if (i == lstTI.size() - 1) {
 					lstContent1 = lstContent.subList(lstTI.get(i).getIndex(), lstContent.size());
 				}
-				// if (type.equals("选择题")) {
-				// lstQuestion.addAll(this.handleXuanZe(lstContent1, "选择题"));
-				// }
-				// if (type.equals("非选择题")) {
-				// lstQuestion.addAll(this.handleXuanZe(lstContent1, "非选择题"));
-				// }
-				// if (type.equals("综合题")) {
-				// lstQuestion.addAll(this.handleXuanZe(lstContent1, "综合题"));
-				// }
 				if (!type.equals("答案开始")) {
 					lstQuestion.addAll(this.handleXuanZe(lstContent1, type));
 				} else {
@@ -126,7 +119,7 @@ public class CommonSplitServiceImpl implements SplitService {
 		return lstQuestion;
 	}
 
-	public List<Question> handleXuanZe(List<String> lstContent, String type) {
+	public List<Question> handleXuanZe(List<String> lstContent, String type) throws InstantiationException, IllegalAccessException {
 		logger.info("---拆分"+type+"---");
 		Boolean tableSign = true;
 		List<Question> lstQuestion = new ArrayList<Question>();
@@ -148,7 +141,7 @@ public class CommonSplitServiceImpl implements SplitService {
 			}
 		}
 		for (int i = 0; i < indexs.size(); i++) {
-			Question q1 = new Question();
+			Question q1 = question.getClass().newInstance();
 			if (i < indexs.size() - 1) {
 				q1 = this.splitSign(lstContent.subList(indexs.get(i), indexs.get(i + 1)), type);
 			} else if (i == indexs.size() - 1) {
@@ -161,7 +154,7 @@ public class CommonSplitServiceImpl implements SplitService {
 		return lstQuestion;
 	}
 
-	public Question splitOption(List<String> lstContent, String type) {
+	public Question splitOption(List<String> lstContent, String type) throws InstantiationException, IllegalAccessException {
 		logger.info("---拆分小题选项---");
 		String regex = "^(\t| )*A[.．]";
 		Pattern p = Pattern.compile(regex);
@@ -174,7 +167,7 @@ public class CommonSplitServiceImpl implements SplitService {
 				indexs.add(i);
 			}
 		}
-		Question q = new Question();
+		Question q = question.getClass().newInstance();
 		if (indexs.size() > 2) {
 			logger.debug("--拆分选项错误--拆出：" + indexs.size());
 		} else if (indexs.size() == 1) { // 判断是否选择题
@@ -206,8 +199,8 @@ public class CommonSplitServiceImpl implements SplitService {
 		return null;
 	}
 
-	public Question splitSign(List<String> lstContent, String type) {
-		Question q = new Question();
+	public Question splitSign(List<String> lstContent, String type) throws InstantiationException, IllegalAccessException {
+		Question q = question.getClass().newInstance();
 		String regex = "^(【)?(\t| )*(答案|解析|题型|难度|分值)";
 		Pattern p = Pattern.compile(regex);
 		List<Integer> indexs = new ArrayList<Integer>();
@@ -270,7 +263,7 @@ public class CommonSplitServiceImpl implements SplitService {
 		return q;
 	}
 
-	public List<Question> handleAnswer(List<Question> lstQuestion, List<String> lstContent) {
+	public List<Question> handleAnswer(List<Question> lstQuestion, List<String> lstContent) throws InstantiationException, IllegalAccessException {
 		Boolean tableSign = true;
 		String regex = "^(\t| )*[0-9]{1,2}[．.、,][\\s\\S]*";
 		Pattern p = Pattern.compile(regex);
@@ -290,7 +283,7 @@ public class CommonSplitServiceImpl implements SplitService {
 			}
 		}
 		for (int i = 0; i < indexs.size(); i++) {
-			Question q1 = new Question();
+			Question q1 = question.getClass().newInstance();
 			if (i < indexs.size() - 1) {
 				q1 = this.splitAnswerSign(lstContent.subList(indexs.get(i), indexs.get(i + 1)));
 			} else if (i == indexs.size() - 1) {
@@ -313,8 +306,8 @@ public class CommonSplitServiceImpl implements SplitService {
 		return lstQuestion;
 	}
 
-	public Question splitAnswerSign(List<String> lstContent) {
-		Question q = new Question();
+	public Question splitAnswerSign(List<String> lstContent) throws InstantiationException, IllegalAccessException {
+		Question q =question.getClass().newInstance();
 		String tihao = this.splitTihao(lstContent.get(0));
 		q.setTihao(tihao);
 		String temp = lstContent.get(0);
