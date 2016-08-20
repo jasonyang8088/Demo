@@ -9,7 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-@Entity(name="demo_subject")
+@Entity(name="b_subject")
 public class Subject {
 
 	private @Id @GeneratedValue(strategy=GenerationType.AUTO) Long id;
@@ -44,7 +44,5 @@ public class Subject {
 	public void setVersions(List<Version> versions) {
 		this.versions = versions;
 	}
-	
-	
 	
 }

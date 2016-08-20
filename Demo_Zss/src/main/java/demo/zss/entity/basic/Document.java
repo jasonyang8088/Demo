@@ -1,108 +1,104 @@
 package demo.zss.entity.basic;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import demo.zss.entity.user.User;
 
-@Entity(name="demo_document")
+@Entity(name="b_document")
 public class Document {
 
 	@Id @GeneratedValue(strategy=GenerationType.AUTO)
-	private Long FId;
+	private Long id;
 	
-	private @ManyToOne @JsonIgnore BookNode node;
+	@ManyToMany
+	private List<DocumentSpecialSpec> documentSpecialSpecs;
 	
-	private String fileName;
+	private String name;
 	
-	private Integer fileSize;
+	private Integer size;
 	
-	private String fileSourceType;
+	private String docSuffix;
 	
-	private Integer views;
+	private Date createTime;
 	
-	private Date CreateTime;
+	@ManyToOne
+	private User createUser;
 	
-	private String content;
-	
-	private Byte FRescCatagory;
+	private String intro;
 
-	public Long getFId() {
-		return FId;
+	public Long getId() {
+		return id;
 	}
 
-	public void setFId(Long fId) {
-		FId = fId;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
-	public BookNode getNode() {
-		return node;
+
+	public List<DocumentSpecialSpec> getDocumentSpecialSpecs() {
+		return documentSpecialSpecs;
 	}
 
-	public void setNode(BookNode node) {
-		this.node = node;
+	public void setDocumentSpecialSpecs(List<DocumentSpecialSpec> documentSpecialSpecs) {
+		this.documentSpecialSpecs = documentSpecialSpecs;
 	}
 
-	public String getFileName() {
-		return fileName;
+	public String getName() {
+		return name;
 	}
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public Integer getFileSize() {
-		return fileSize;
+	public Integer getSize() {
+		return size;
 	}
 
-	public void setFileSize(Integer fileSize) {
-		this.fileSize = fileSize;
+	public void setSize(Integer size) {
+		this.size = size;
 	}
 
-	public String getFileSourceType() {
-		return fileSourceType;
+	public String getDocSuffix() {
+		return docSuffix;
 	}
 
-	public void setFileSourceType(String fileSourceType) {
-		this.fileSourceType = fileSourceType;
-	}
-
-	public Integer getViews() {
-		return views;
-	}
-
-	public void setViews(Integer views) {
-		this.views = views;
+	public void setDocSuffix(String docSuffix) {
+		this.docSuffix = docSuffix;
 	}
 
 	public Date getCreateTime() {
-		return CreateTime;
+		return createTime;
 	}
 
 	public void setCreateTime(Date createTime) {
-		CreateTime = createTime;
+		this.createTime = createTime;
 	}
 
-	public String getContent() {
-		return content;
+	public User getCreateUser() {
+		return createUser;
 	}
 
-	public void setContent(String content) {
-		this.content = content;
+	public void setCreateUser(User createUser) {
+		this.createUser = createUser;
 	}
 
-	public Byte getFRescCatagory() {
-		return FRescCatagory;
+	public String getIntro() {
+		return intro;
 	}
 
-	public void setFRescCatagory(Byte fRescCatagory) {
-		FRescCatagory = fRescCatagory;
+	public void setIntro(String intro) {
+		this.intro = intro;
 	}
+	
 	
 	
 }

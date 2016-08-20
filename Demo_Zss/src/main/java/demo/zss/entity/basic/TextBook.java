@@ -12,7 +12,7 @@ import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Entity(name="demo_textbook")
+@Entity(name="b_text_book")
 public class TextBook {
 
 	private @Id @GeneratedValue(strategy=GenerationType.AUTO) Long id;
@@ -48,7 +48,4 @@ public class TextBook {
 	public void setBooknodes(List<BookNode> booknodes) {
 		this.booknodes = booknodes;
 	}
-	
-	
-	
 }

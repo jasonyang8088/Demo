@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>Hello World!</title>
+<meta name="_csrf" th:content="${_csrf.token}" />
+<!-- default header name is X-CSRF-TOKEN -->
+<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+</head>
+<body>
+	<form enctype="multipart/form-data" id="fileForm">
+		<input type="file" name="file" onchange="uploadFile();" id="file" />
+	</form>
+		<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+	<ul id="name">
+		<li th:each="name:${names}" th:text="${name}">1</li>
+	</ul>
+
+</body>
+<script type="text/javascript" src="/js/jquery-1.12.3.min.js"></script>
+<script type="text/javascript">
+	function uploadFile() {
+		var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr("content");
+		var fd = new FormData(document.getElementById("fileForm"));
+		$.ajax({
+			url : "uploadFile",
+			type : "POST",
+			data : fd,
+			processData : false, // 告诉jQuery不要去处理发送的数据
+			contentType : false, // 告诉jQuery不要去设置Content-Type请求头
+			beforeSend: function(xhr){  
+		        xhr.setRequestHeader(header, token);  
+		    }, 
+			success : function(data) {
+				$("#name").replaceWith(data);
+			}
+		});
+	};
+</script>
+</html>

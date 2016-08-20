@@ -12,9 +12,19 @@
             <!--/* When using CSRF this needs to be a POST */-->
             <form th:action="@{/logout}" method="post" style="display:inline"><input type="submit" value="Logout"/></form>
         </div>
-        <div sec:authorize-url="/admin/foo">
+        <div sec:authorize-url="/admin">
    				 can see /admin
+ 		</div>
+ 		<div>
+   			<a th:href="@{/basic/toBasicDataSubject}">科目</a>
+ 		</div>
+ 		<div>
+   			<a th:href="@{/basic/toFileUpload}" >文件上传</a>
  		</div>
         <p>Click <a th:href="@{/hello}">here</a> to see a greeting.</p>
     </body>
+    <script type="text/javascript">
+    
+    
+    </script>
 </html>

@@ -11,7 +11,7 @@ import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Entity(name="demo_booknode")
+@Entity(name="b_book_node")
 public class BookNode {
 
 	@Id
@@ -24,8 +24,25 @@ public class BookNode {
 	
 	private Byte depth;
 	
+	private String orderNo;
 	
-	private @OneToMany List<BookNode> booknodes;
+	private @ManyToOne BookNode parent;
+	
+	private @OneToMany List<BookNode> childrens;
+	
+//	@Transient
+//	private boolean isEnd;
+//	
+//	
+//
+//	public boolean isEnd() {
+//		if(this.childrens.size()==0){
+//			return true;
+//		}else {
+//			return false;
+//		}
+//		
+//	}
 
 	public Long getId() {
 		return id;
@@ -59,14 +76,31 @@ public class BookNode {
 		this.depth = depth;
 	}
 
-
-	public List<BookNode> getBooknodes() {
-		return booknodes;
+	public String getOrderNo() {
+		return orderNo;
 	}
 
-	public void setBooknodes(List<BookNode> booknodes) {
-		this.booknodes = booknodes;
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
 	}
+
+	public BookNode getParent() {
+		return parent;
+	}
+
+	public void setParent(BookNode parent) {
+		this.parent = parent;
+	}
+
+	public List<BookNode> getChildrens() {
+		return childrens;
+	}
+
+	public void setChildrens(List<BookNode> childrens) {
+		this.childrens = childrens;
+	}
+
+
 	
 	
 }

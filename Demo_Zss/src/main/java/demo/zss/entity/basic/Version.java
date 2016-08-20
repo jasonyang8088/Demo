@@ -15,7 +15,7 @@ import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Entity(name="demo_version")
+@Entity(name="b_version")
 public class Version implements Comparable<Version>{
 	
 	@Id @GeneratedValue(strategy=GenerationType.AUTO) 

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>Hello World!</title>
+</head>
+<body>
+	<div>
+	<span>小学：</span><span th:each="subject:${subjects}" th:if="${subject.stage==1}" th:text="${subject.subjectName}">语文</span><span th:remove="all" >数学</span><span th:remove="all">英语</span>
+	</div>
+	<div>
+	<span>初中：</span><span th:each="subject:${subjects}" th:if="${subject.stage==2}" th:text="|${subject.subjectName}(id:${subject.id})  |">语文</span><span th:remove="all" >数学</span><span th:remove="all">英语</span>
+	</div>
+	<div>
+	<span>高中：</span><span th:each="subject:${subjects}" th:if="${subject.stage==3}" th:text="|${subject.subjectName}(id:${subject.id})  |">语文</span><span th:remove="all" >数学</span><span th:remove="all">英语</span>
+	</div>
+	<form action="#" th:action="@{/basic/addSubject}" method="post">
+		<div>
+		<input type="text" name="id" />
+		</div>
+		<div>
+		<select name="stage">
+			<option value="1">小学</option>
+			<option value="2">初中</option>
+			<option value="3" selected="selected">高中</option>
+		</select>
+		</div>
+		<div>
+		<input type="text" name="subjectName" />
+		</div>
+		<div>
+		<input type="submit" value="提交"/>
+		</div>
+	</form>
+	
+</body>
+</html>
