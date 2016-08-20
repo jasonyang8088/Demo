@@ -22,7 +22,8 @@
 	function uploadFile() {
 		var token = $("meta[name='_csrf']").attr("content");
 		var header = $("meta[name='_csrf_header']").attr("content");
-		var fd = new FormData(document.getElementById("fileForm"));
+		var fd = new FormData();
+		fd.append("file",$("#file")[0].files[0]);
 		$.ajax({
 			url : "uploadFile",
 			type : "POST",
