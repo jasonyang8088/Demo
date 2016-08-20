@@ -1,0 +1,492 @@
+@charset "utf-8";
+
+/**   学易口语作业平台
+ * 1. by wangwei
+ * 2. qq 290518066
+ * 3. time 2016-08-14
+ */
+
+/*公用头部*/
+body {
+	background-color: rgba(247, 249, 249, 1);
+}
+.header {
+	height: 60px;
+	background-color: #fff;
+	border-bottom: 1px solid #ccc;
+}
+.hd {
+	width: 1200px;
+	margin: 0 auto;
+}
+.hd h1 {
+	float: left;
+	line-height: 60px;
+	font-size: 26px;
+	color: #317a59;
+}
+.user_intrance {
+	float: right;
+	position: relative;
+}
+.user_intrance .u_name {
+	float: left;
+	line-height: 60px;
+	padding-left: 40px;
+	padding-right: 10px;
+	background: url(../images/icon.png) 10px 19px no-repeat;
+	color: #333;
+}
+.user_intrance .u_name i {
+	float: right;
+	width: 15px;
+	height: 20px;
+	margin-top: 20px;
+	margin-left: 10px;
+	background: url(../images/icon.png) 0px -40px no-repeat;
+}
+.user_inbox {
+	display: none;
+	width: 100%;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	border-top: none;
+	position: absolute;
+	top: 60px;
+}
+.user_inbox a {
+	display: block;
+	text-align: center;
+	color: #666;
+	line-height: 30px;
+	font-size: 12px;
+}
+.user_inbox a:hover {
+	background-color: rgba(247, 249, 249, 1);
+}
+
+/*公用2秒提示*/
+.aTips {
+	display: none;
+	max-width: 200px;
+	padding: 12px 40px;
+	line-height: 24px;
+	background-color: #317a59;
+	border-radius: 5px;
+	font-family: "SimSun";
+	font-size: 14px;
+	color: #fff;
+
+	position: fixed;
+	top: 50%;
+	margin-top: -50px;
+	left: 50%;
+	margin-left: -100px;
+	z-index: 8000;
+}
+/*公用弹出确认框样式*/
+.alertTip_bg {
+	width: 100%;
+	height: 100%;
+	background: url(../images/bg_alpha.png) left center repeat;
+	background: rgba(0,0,0,.5);
+	position: fixed;
+	top: 0;
+	left:0;
+	z-index: 5100;
+}
+.alertTip {
+	width: 300px;
+	background-color: #fff;
+	border: 1px solid #388763;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	margin-left: -150px;
+	margin-top: -100px;
+	z-index: 5101;
+}
+
+.alertTip h6 {
+	height: 40px;
+	line-height: 40px;
+	padding-left: 10px;
+	margin-bottom: 20px;
+	border-bottom: 1px solid #ccc;
+	background-color: #388763;
+	color: #fff;
+}
+.alertTip h6:hover {
+	cursor: move;
+}
+.alertTip p {
+	padding: 0 10px;
+	line-height: 24px;
+	font-size: 16px;
+	text-indent: 2em;
+}
+.alertTip > button {
+	display: block;
+	width: 100%;
+	height: 40px;
+	line-height: 40px;
+	text-align: center;
+	margin-top: 20px;
+	border: none;
+	background-color: #fff;
+	border-top: 1px solid #eee;
+	cursor: pointer;
+	transition: .3s background-color;
+	font-family: "SimSun";
+	font-size: 14px;
+}
+.alertTip > button:hover {
+	background-color: #f8f8f8;
+}
+.alertTip > button.sure {
+	float: left;
+	width: 149px;
+	border-right: 1px solid #eee;
+}
+.alertTip > button.cancel {
+	float: right;
+	width: 150px;
+}
+
+
+
+.main {
+	width: 1200px;
+	margin: 0 auto;
+}
+
+/*作业列表 作业详情  完成报告*/
+.zy_list_top {
+	padding: 40px 20px 20px;
+}
+.zy_list_top h2 {
+	float: left;
+	line-height: 34px;
+	font-size: 18px;
+}
+.zy_list_top a {
+	float: right;
+	width: 80px;
+	padding-left: 50px;
+	height: 34px;
+	line-height: 34px;
+	background-color: #317a59;
+	background-image: url(../images/icon.png);
+	background-position: 24px -72px;
+	background-repeat: no-repeat;
+	border-radius: 2px;
+	font-size: 14px;
+	color: #fff;
+}
+.zy_list_top a:hover {
+	background-color: #388763;
+}
+.zj_list_table {
+	padding: 0 20px;
+}
+.zj_list_table table {
+	width: 100%;
+	background-color: #fff;
+	font-family: "SimSun";
+	font-size: 14px;
+	color: #666;
+}
+.zj_list_table table th,
+.zj_list_table table td {
+	padding:12px;
+	text-align:center;
+}
+.zj_list_table table td a {
+	margin: 0 5px;
+	color: #317a59;
+}
+.zj_list_table table td.publish_no {
+	color: #f00;
+}
+.zj_list_table table td.publish_ed {
+	color: #317a59;
+}
+.zj_list_table table td.txt {
+	text-align: left;
+}
+.zy_rep_top {
+	padding: 30px 20px 10px;
+	margin-bottom: 10px;
+}
+.zy_rep_top h2 {
+	padding-bottom: 20px;
+	line-height: 34px;
+	text-align: center;
+	font-size: 18px;
+	font-weight: bold;
+}
+.zy_rep_top p {
+	padding-bottom: 10px;
+	margin-right: 40px;
+}
+.zy_rep_top p .submit_no {
+	color: #f00;
+}
+.go_back {
+	float: right;
+	width: 140px;
+	height: 40px;
+	line-height: 40px;
+	border-radius: 2px;
+	margin-top: 40px;
+	text-align: center;
+	background-color: #317a59;
+	color: #fff;
+}
+.go_back:hover {
+	color: #fff;
+	background-color: #388763;
+}
+.alert_bg {
+	display: none;
+	width: 100%;
+	height: 100%;
+	background: url(../images/bg_alpha.png) left center repeat;
+	background: rgba(0,0,0,.3);
+	position: fixed;
+	top: 0;
+	left:0;
+	z-index: 5000;
+}
+.report_detail {
+	width: 398px;
+	height: 498px;
+	padding: 20px;
+	position: absolute;
+	top: 50%;
+	margin-top: -260px;
+	left: 50%;
+	margin-left: -210px;
+	z-index: 5001;
+	overflow-x:hidden;
+	overflow-y: auto; 
+	background-color: #fff;
+	border: 1px solid #ccc;
+}
+.report_detail i.close {
+	position: absolute;
+	top: 3px;
+	right: 3px;
+	width: 14px;
+	height: 14px;
+	background: url(../images/icon.png) 0px -152px no-repeat;
+	cursor: pointer;
+
+}
+.report_detail table {
+	width: 100%;
+	font-size: 12px;
+}
+.report_detail table th,
+.report_detail table td {
+	padding:6px;
+}
+.report_detail table td a {
+	display: block;
+	width: 16px;
+	height: 16px;
+	margin: auto;
+	background: url(../images/icon.png) 0px -179px no-repeat;
+}
+.zy_detail .li {
+	margin-bottom: 15px;
+}
+.zy_detail .li p {
+	float: left;
+	width: 350px;
+	line-height: 30px;
+	margin-right: 20px;
+	text-align: right;
+}
+.zy_detail .li h3,
+.zy_detail .li span {
+	float: left;
+	line-height: 30px;
+	font-family: "SimSun";
+	font-weight: bold;
+}
+.zy_detail .li span {
+	font-weight: normal;
+}
+.zy_jz {
+	float: left;
+	width: 700px;
+	padding-top: 20px;
+}
+.zy_jz li {
+	line-height: 30px;
+	font-family: Arial;
+}
+.zy_jz li i {
+	font-style: normal;
+	font-family: "SimSun";
+}
+
+.zy_import .li p {
+	height: 36px;
+}
+.zy_import .li input[name="title"] {
+	width: 415px;
+	line-height: 14px;
+	padding: 6px 10px;
+	font-size: 14px;
+	border: 1px solid #ccc;
+}
+.zy_import .li span a {
+	margin-right: 30px;
+	color: #333;
+	font-weight: bold;
+}
+.zy_import .li span a.cur {
+	color: #f00;
+}
+.zy_import .li span a input[type='radio'] {
+	margin-right: 5px;
+}
+.zy_import .li .t {
+	float: left;
+	text-align: left;
+	width: 200px;
+	height: 34px;
+	line-height: 34px;
+	padding: 0 10px;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	font-size: 14px;
+	color: #666;
+}
+.zy_import .li .upload {
+	float: left;
+	position: relative;
+	width: 80px;
+	height: 36px;
+	line-height: 36px;
+	text-align: center;
+	overflow: hidden;
+	background-color: #388763;
+	color: #fff;
+}
+.zy_import .li .upload input[type='file'] {
+	position: absolute;
+	top: 0;
+	left:-80px;
+	z-index: 2;
+	cursor: pointer;
+	opacity: 0;
+	filter:alpha(opacity=0);
+}
+.zy_import .li .tip {
+	display: none;
+	float: left;
+	line-height: 36px;
+	text-align: left;
+	padding-left: 10px;
+	font-size: 12px;
+	color: #666;
+}
+.importedListem {
+	float: left;
+	width: 700px;
+}
+.importedListem li {
+	line-height: 30px;
+}
+.importedListem li strong {
+	float: left;
+	line-height: 30px;
+	width: 500px;
+	font-weight: normal;
+	font-family: Arial;
+}
+.importedListem li a,
+.importedListem li em {
+	float: right;
+	font-size: 12px;
+	color: #317a59;
+	padding-left: 16px;
+	background-image: url(../images/icon.png);
+	background-repeat: no-repeat;
+}
+.importedListem li a.del {
+	background-position: 0px -145px;
+}
+.importedListem li em {
+	position: relative;
+	width: 30px;
+	background-position: 0px -121px;
+	overflow: hidden;
+	font-style: normal;
+	margin-right: 10px;
+}
+.importedListem li a.add {
+	width: 30px;
+	background-position: 0px -121px;
+	margin-right: 10px;
+
+}
+.importedListem li em input[type='file'] {
+	position: absolute;
+	top: 0;
+	left:-80px;
+	z-index: 2;
+	cursor: pointer;
+	opacity: 0;
+	filter:alpha(opacity=0);
+}
+.laydate-icon {
+	width:208px;
+	padding:8px 10px;
+	color: #666;
+}
+.hand_listem {
+	margin-left: -56px;
+}
+.hand_listem li {
+	margin-bottom: 15px;
+}
+.hand_listem li input {
+	float: left;
+	width: 415px;
+	padding: 0 10px;
+	border: 1px solid #ccc;
+	font-family: Arial;
+}
+.hand_listem li span i {
+	font-style: normal;
+}
+.btn_import {
+	padding-left: 300px;
+}
+.btn_import button,
+.btn_import a {
+	float: left;
+	margin-right: 30px;
+	border:none;
+}
+.btn_import a.qx {
+	background-color: rgba(153, 153, 153, 1);
+}
+.yinpin {
+	line-height: 20px;
+	padding-top: 6px;
+	padding-left: 58px;
+	font-size: 12px;
+	color: #666;
+}
+
+
+
+
+
+
+

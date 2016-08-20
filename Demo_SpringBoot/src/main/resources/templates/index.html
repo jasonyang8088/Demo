@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh"  xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<meta name="renderer" content="webkit" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1"/>
+<link rel="shortcut icon" href="images/favicon.ico"/>
+<link rel="bookmark" href="images/favicon.ico"/>
+
+<title>登录页 | 学易口语作业平台</title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+</head>
+
+<body>
+<div class="login_wrap">
+	<ul>
+		<li th:each="bookNode,bookNodeStat:${bookNodes}" th:value="${bookNode.id}" th:text="${bookNode.name}">
+			<a th:href="@{/bookNode/${bookNode}/bookNodes}">haha</a>
+		</li>
+	</ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+    <head>
+        <title>Spring Security Example</title>
+    </head>
+    <body>
+        <h1>Welcome!</h1>
+         <div th:fragment="logout" class="logout"
+             sec:authorize="isAuthenticated()">
+            Logged user: <span sec:authentication="name">Bob</span> |
+            Roles: <span sec:authentication="principal.authorities">[ROLE_USER, ROLE_ADMIN]</span> |
+            <!--/* When using CSRF this needs to be a POST */-->
+            <form th:action="@{/logout}" method="post" style="display:inline"><input type="submit" value="Logout"/></form>
+        </div>
+        <div sec:authorize-url="/admin/foo">
+   				 can see /admin
+ 		</div>
+        <p>Click <a th:href="@{/hello}">here</a> to see a greeting.</p>
+    </body>
+</html>

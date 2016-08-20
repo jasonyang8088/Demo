@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<meta name="renderer" content="webkit" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1" />
+<link rel="shortcut icon" href="images/favicon.ico" />
+<link rel="bookmark" href="images/favicon.ico" />
+
+<title>导入新建作业 | 学易口语作业平台</title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+
+<link rel="stylesheet" href="css/reset.css" />
+<link rel="stylesheet" href="css/main.css" />
+
+
+</head>
+
+<body>
+	<div class="header">
+		<div class="hd cf">
+			<h1>学易口语作业平台</h1>
+			<div class="user_intrance">
+				<a class="u_name" href="#">李老师<i></i></a>
+				<div class="user_inbox">
+					<a href="#">个人中心</a> <a href="template-0-login.html">退出</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="main">
+			<div class="zy_list_top cf">
+				<h2>新建作业</h2>
+			</div>
+			<div class="zj_list_table zy_detail zy_import">
+				<div class="li cf">
+					<p>作业标题：</p>
+					<input type="text" name="title" value="课后作业" autocomplete="no" />
+				</div>
+				<div class="li cf">
+					<p>作业内容：</p>
+					<span><a href="createHomeworkHandle"><input type="radio" />手动录入</a><a
+						class="cur" href="createHomework"><input type="radio"
+							checked="true" />文件导入</a></span>
+				</div>
+				<div class="li cf">
+					<p>&nbsp;</p>
+					<p class="t">2016-08-20 8:00</p>
+					<div class="upload">
+						<input type="file" name="uploadFile" id="uploadFile"
+							onchange="uploadFile();" />浏览
+					</div>
+					<p class="tip">上传成功！</p>
+				</div>
+				<div class="li cf">
+					<p>&nbsp;</p>
+					<ul class="importedListem" id="import_listem">
+						<li class="cf" th:each="sentence,sentenceStat : ${sentences}"><span th:text="${sentenceStat.count}">句子${sentenceStat.count}：</span> <strong th:text="${sentence.english}"></strong>
+							<a class="del" href="javascript:void(0);">删除</a><em><input
+								type="file" name="file1" />音频</em>
+							<div class="yinpin clear">25242525625.mp3</div></li>
+					</ul>
+				</div>
+				<div class="li cf">
+					<p>设置完成时间：</p>
+					<span><input class="laydate-icon" id="laydate-last-time"
+						value="" /></span>
+				</div>
+				<div class="btn_import cf">
+					<a class="go_back fb" href="#">发布</a> <a class="go_back bc"
+						href="#">仅保存</a> <a class="go_back qx" href="#">取消</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script src="js/jquery-1.12.3.min.js"></script>
+<script src="js/ajaxfileupload.js"></script>
+<script type="text/javascript">
+	function uploadFile() {
+		$.ajaxFileUpload({
+			url : '/uploadFile',
+			secureuri : false,
+			fileElementId : 'uploadFile',
+			dataType : "JSON",
+			success : function(data) {
+				console.log(data);
+				$("#import_listem").replaceWith(data);
+			}
+		})
+	};
+</script>
+</html>

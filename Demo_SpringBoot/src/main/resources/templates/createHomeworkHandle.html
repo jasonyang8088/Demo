@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="renderer" content="webkit" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1" />
+<link rel="shortcut icon" href="images/favicon.ico" />
+<link rel="bookmark" href="images/favicon.ico" />
+
+<title>手动新建作业 | 学易口语作业平台</title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+
+<link rel="stylesheet" href="css/reset.css" />
+<link rel="stylesheet" href="css/main.css" />
+</head>
+
+<body>
+	<div class="header">
+		<div class="hd cf">
+			<h1>学易口语作业平台</h1>
+			<div class="user_intrance">
+				<a class="u_name" href="#">
+					李老师<i></i>
+				</a>
+				<div class="user_inbox">
+					<a href="#">个人中心</a>
+					<a href="template-0-login.html">退出</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="main">
+			<div class="zy_list_top cf">
+				<h2>新建作业</h2>
+			</div>
+			<div class="zj_list_table zy_detail zy_import">
+				<div class="li cf">
+					<p>作业标题：</p>
+					<input type="text" name="title" value="课后作业" />
+				</div>
+				<div class="li cf">
+					<p>作业内容：</p>
+					<span><a class="cur" href="createHomeworkHandle">
+							<input type="radio" />
+							手动录入
+						</a> <a href="createHomework">
+							<input type="radio" />
+							文件导入
+						</a></span>
+				</div>
+				<div class="li cf">
+					<p>&nbsp;</p>
+					<ul class="importedListem hand_listem" id="hand_listem">
+						<li class="cf">
+							<span>句子<i>1</i>：
+							</span>
+							<input type="text" name="txt1" value="" />
+							<a class="del" href="javascript:void(0);">删除</a>
+							<em><input type="file" name="file1" />音频</em>
+							<a class="add" href="javascript:void(0);">句子</a>
+						</li>
+						<!--<li class="cf"><span>句子<i>2</i>：</span><input type="text" name="txt1" value="" /><a class="del" href="javascript:void(0);">删除</a><em><input type="file" name="file1" />音频</em><a class="add" href="javascript:void(0);">句子</a>
+						<div class="yinpin clear">25242525625.mp3</div></li>-->
+					</ul>
+				</div>
+				<div class="li cf">
+					<p>设置完成时间：</p>
+					<span><input class="laydate-icon" id="laydate-last-time" value="" /></span>
+				</div>
+				<div class="btn_import cf">
+					<a class="go_back fb" href="#">发布</a>
+					<a class="go_back bc" href="#">仅保存</a>
+					<a class="go_back qx" href="#">取消</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="alert_bg">
+		<div class="report_detail scroller">
+			<i class="close"></i>
+			<table>
+				<tbody>
+					<tr>
+						<th>姓名</th>
+						<th>分数</th>
+						<th>录音</th>
+					</tr>
+				<tbody id="report_detail_data">
+					<tr>
+						<td>王伟</td>
+						<td>92</td>
+						<td><a href="javascript:void(0);"></a></td>
+					</tr>
+					<tr>
+						<td>陈文标</td>
+						<td>92</td>
+						<td><a href="javascript:void(0);"></a></td>
+					</tr>
+					<tr>
+						<td>王伟</td>
+						<td>92</td>
+						<td><a href="javascript:void(0);"></a></td>
+					</tr>
+				</tbody>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+
+
+	<script src="js/jquery-1.12.3.min.js"></script>
+	<script src="js/common.js"></script>
+	<script type="text/javascript" src="js/plugins/laydate/laydate.js"></script>
+	<script>
+		//添加句子
+		xyky.ind.addNewSentence();
+		//xyky.cmn.tips0("提示");
+		//xyky.cmn.tips1("这是一个类似alert的弹出提示框");
+		//xyky.cmn.tips2("确定要删除？");
+
+		//默认今天日期
+		var today = laydate.now();
+		$("#laydate-last-time").val(today);
+
+		laydate.skin('molv');//日期插件皮肤
+		laydate({
+			elem : '#laydate-last-time',
+			min : laydate.now()
+		//今天以前不可点
+		});
+	</script>
+</body>
+</html>
