@@ -34,7 +34,7 @@
 						<td th:text="${subject.stage}">Tanmay</td>
 						<td th:text="${subject.subjectName}">Bangalore</td>
 						<td>修改
-							<button name="name" th:href="@{/basic/subject/${subject.id}}" th:onclick="'javascript:deleteSubject('+${subject.id}+');'">删除</button>
+							<a th:href="@{/basic/deleteSubject(id=${subject.id})}">删除</a>
 						</td>
 					</tr>
 					<tr th:remove="all">
@@ -92,26 +92,9 @@
 				xhr.setRequestHeader(header, token);
 			},
 			success : function(data) {
-				alert("success");
+				location.href="/basic/subjectManagerIndex";
 			}
 		});
 	};
-	function deleteSubject(id) {
-		alert(this);
-		alert($(this).attr("name"));
-		var token = $("meta[name='_csrf']").attr("content");
-		var header = $("meta[name='_csrf_header']").attr("content");
-		$.ajax({
-			url : "/basic/subject/"+id,
-			type : "DELETE",
-			dataType:"text",
-			beforeSend : function(xhr) {
-				xhr.setRequestHeader(header, token);
-			},
-			success : function(data) {
-				alert("success");
-			}
-		});
-	}
 </script>
 </html>

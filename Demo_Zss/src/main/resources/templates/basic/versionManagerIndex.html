@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>Hello World!</title>
+<meta name="_csrf" th:content="${_csrf.token}" />
+<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+<link href="/css/bootstrap.min.css" rel="stylesheet" />
+<script src="/js/jquery-1.12.3.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.twbsPagination.js"></script>
+</head>
+<body>
+	<nav th:replace="fragments/headNav::nav"></nav>
+	<div>
+		<div class="col-md-2">
+			<div th:include="fragments/basicDataLeft::leftmenu"></div>
+		</div>
+		<div class="col-md-10">
+			<div>
+				<button class="btn" data-toggle="modal" data-target="#addModal">新增</button>
+			</div>
+			<table id="table" class="table">
+				<caption>
+					<select id="stageSelectMain" name="stage" th:value="${versionManagerSearchForm.stage}">
+						<option value="0" th:selected="${versionManagerSearchForm.stage==0}">请选择</option>
+						<option value="2" th:selected="${versionManagerSearchForm.stage==2}">初中</option>
+						<option value="3" th:selected="${versionManagerSearchForm.stage==3}">高中</option>
+					</select>
+					<select id="subjectSelectMain">
+						<option th:if="${subjectId}==null">请选择</option>
+						<option th:each="subject:${subjects}" th:value="${subject.id}" th:text="${subject.subjectName}"
+						th:selected="${subject.id}==${versionManagerSearchForm.subjectId}">语文</option>
+						<option th:remove="all">数学</option>
+						<option th:remove="all">英语</option>
+					</select>
+				</caption>
+				<thead>
+					<tr>
+						<th>学段</th>
+						<th>科目</th>
+						<th>版本</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody id="tableData">
+					<tr th:each="version:${versions}">
+						<td th:text="${version.subject.stage}">Tanmay</td>
+						<td th:text="${version.subject.subjectName}">Bangalore</td>
+						<td th:text="${version.versionName}">Bangalore</td>
+						<td>修改 <a th:href="@{/basic/deleteVersion(id=${version.id})}">删除</a>
+						</td>
+					</tr>
+					<tr th:remove="all">
+						<td>Sachin</td>
+						<td>Mumbai</td>
+					</tr>
+				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="4">
+							<input id="totalPage" type="hidden" th:value="${totalPage}"/>
+							<ul id="pagination-demo" th:attr="totalPage='${totalPage}'" class="pagination-sm"></ul>
+						</td>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+	</div>
+	<!-- 模态框（Modal） -->
+	<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">添加版本</h4>
+				</div>
+				<div class="modal-body">
+					<form id="versionForm" th:object="${version}">
+						<div class="form-group">
+							<label for="stage">学段</label>
+							<select id="stageSelect" class="form-control" name="stage">
+								<option value="2">初中</option>
+								<option value="3">高中</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="subjectName">科目名称</label>
+							<select id="subjectSelect" class="form-control" th:field="*{subject}">
+								<th:block id="subjectOption" th:each="subject : ${subjects}">
+									<option th:fragment="subjectOption" th:value="${subject.id}" th:text="${subject.subjectName}">语文</option>
+								</th:block>
+								<option value="2" th:remove="all">数学</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="exampleInputPassword1">版本名称</label>
+							<input type="text" class="form-control" name="versionName" placeholder="请输入版本名称" />
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary" onclick="submitSubject();">提交更改</button>
+				</div>
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal -->
+	</div>
+</body>
+<script type="text/javascript">
+	$(function() {
+		bindPagination();
+		$("#stageSelect").on("change", function() {
+			var stage = $(this).val()
+			$.ajax({
+				url : "/basic/getSubjects",
+				type : "GET",
+				data : {
+					stage : stage
+				},
+				success : function(data) {
+					$("#subjectSelect").html(data);
+				}
+			});
+		});
+		bindSelect();
+
+	});
+	function bindPagination(){
+		var totalPage =$("#totalPage").val();
+		$("#pagination-demo").twbsPagination({
+			totalPages : totalPage,
+			visiblePages : 5,
+			onPageClick : function(event, page) {
+				$.ajax({
+					url : "/basic/changeTableData",
+					type : "GET",
+					data : {
+						page : page
+					},
+					success : function(data) {
+						$("#tableData").replaceWith(data);
+					}
+				});
+			}
+		});
+	}
+	function bindSelect(){
+		$("#stageSelectMain").on("change", function() {
+			var stage = $(this).val()
+			$.ajax({
+				url : "/basic/changeTable",
+				type : "GET",
+				data : {
+					stage : stage,
+					subjectId:0
+				},
+				success : function(data) {
+					$("#table").replaceWith(data);
+					bindSelect();
+					bindPagination();
+				}
+			});
+		});
+		$("#subjectSelectMain").on("change", function() {
+			var stage = $("#stageSelectMain").val();
+			var subjectId = $(this).val();
+			$.ajax({
+				url : "/basic/changeTable",
+				type : "GET",
+				data : {
+					stage : stage,
+					subjectId:subjectId
+				},
+				success : function(data) {
+					$("#table").replaceWith(data);
+					bindSelect();
+					bindPagination();
+				}
+			});
+		})
+	}
+	function submitSubject() {
+		var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr("content");
+		var fd = new FormData($("#versionForm")[0]);
+		$.ajax({
+			url : "/basic/addVersion",
+			type : "POST",
+			data : fd,
+			processData : false, // 告诉jQuery不要去处理发送的数据
+			contentType : false, // 告诉jQuery不要去设置Content-Type请求头
+			beforeSend : function(xhr) {
+				xhr.setRequestHeader(header, token);
+			},
+			success : function(data) {
+				location.href = "/basic/versionManagerIndex";
+			}
+		});
+	};
+</script>
+</html>
