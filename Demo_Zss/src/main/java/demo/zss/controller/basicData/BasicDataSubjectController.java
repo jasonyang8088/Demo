@@ -7,15 +7,21 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
 import demo.zss.entity.basic.Subject;
+import demo.zss.entity.basic.Version;
 import demo.zss.repository.basic.SubjectRepository;
+import demo.zss.repository.basic.VersionRepository;
 
 @Controller
 @RequestMapping("/basic")
@@ -23,29 +29,16 @@ public class BasicDataSubjectController {
 	
 	@Autowired
 	private SubjectRepository subjectRepository;
+	
+	@Autowired
+	private VersionRepository versionRepository;
 
 	public String toBasicDataIndex(Model model){
 		return null;
 	}
 	
-	@RequestMapping("/toBasicDataSubject")
+	@RequestMapping("/basicDataIndex")
 	public String toBasicDataSubject(Model model){
-		List<Subject> subjects=subjectRepository.findAll();
-		model.addAttribute("subjects", subjects);
-		return "/basic/basicDataIndex";
-	}
-	
-	@RequestMapping(value="/addSubject",method=RequestMethod.POST)
-	public String addSubject(Subject subject ,Model model){
-		subjectRepository.save(subject);
-		List<Subject> subjects=subjectRepository.findAll();
-		model.addAttribute("subjects", subjects);
-		return "/basic/basicDataIndex";
-	}
-	
-	@RequestMapping(value="/deleteSubject",method=RequestMethod.DELETE)
-	public String deleteSubject(Long id ,Model model){
-		subjectRepository.delete(id);
 		List<Subject> subjects=subjectRepository.findAll();
 		model.addAttribute("subjects", subjects);
 		return "/basic/basicDataIndex";
@@ -99,5 +92,22 @@ public class BasicDataSubjectController {
 		}
 		model.addAttribute("names", names);
 		return "/basic/fileUpload::#name";
+	}
+	
+	@RequestMapping(value="/addVersion",method=RequestMethod.GET)
+	public String toAddVersion(Model model){
+		Version  v = new Version();
+		model.addAttribute("version", v);
+		model.addAttribute("subjects", subjectRepository.findAll());
+		return "/basic/addVersion";
+	}
+	
+	@RequestMapping(value="/addVersion",method=RequestMethod.POST)
+	public String addVersion(@ModelAttribute(value="version")@Valid Version version,BindingResult bindingResult,Model model){
+		System.out.println(version.getVersionName());
+		System.out.println(version.getSubject());
+		System.out.println(version.getSubject().getSubjectName());
+		versionRepository.save(version);
+		return "/basic/addVersion";
 	}
 }

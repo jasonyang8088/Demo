@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>Hello World!</title>
+</head>
+<body>
+	<form action="#" th:action="@{/basic/addVersion}" th:object="${version}" method="post">
+		<div>
+		<select th:field="*{subject}">
+			 <option th:each="subject : ${subjects}" 
+          		th:value="${subject.id}" 
+          		th:text="${subject.subjectName}">Wireframe</option>
+		</select>
+		
+		<input type="text" th:field="*{versionName}" />
+		</div>
+		<div>
+		<input type="submit" value="提交"/>
+		</div>
+	</form>
+	
+</body>
+</html>

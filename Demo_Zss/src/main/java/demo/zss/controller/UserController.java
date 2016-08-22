@@ -14,8 +14,10 @@ public class UserController {
 	
 	@Autowired
 	private UserRepository userRepository;
+	
 
 	@RequestMapping("/users")
+	
 	public List<User> findAll(){
 		return userRepository.findAll();
 	}

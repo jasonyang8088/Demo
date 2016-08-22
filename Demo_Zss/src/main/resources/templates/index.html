@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>Spring Security Example</title>
+<link href="/css/bootstrap.min.css" rel="stylesheet" />
+<script src="/js/jquery-1.12.3.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<nav th:replace="fragments/headNav::nav">
+	</nav>
+	<div sec:authorize-url="/admin">can see /admin</div>
+	<div>
+		<a th:href="@{/basic/toBasicDataSubject}">科目</a>
+	</div>
+	<div>
+		<a th:href="@{/basic/toFileUpload}">文件上传</a>
+	</div>
+
+	<div>
+		<a th:href="@{/basic/addVersion}">添加版本</a>
+	</div>
+	<p>
+		Click<a th:href="@{/hello}">here</a>to see a greeting.
+	</p>
+</body>
+</html>
