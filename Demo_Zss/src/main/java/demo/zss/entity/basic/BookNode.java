@@ -26,9 +26,13 @@ public class BookNode {
 	
 	private String orderNo;
 	
+	private Byte status;   //0:失效   1：正常
+	
 	private @ManyToOne BookNode parent;
 	
-	private @OneToMany List<BookNode> childrens;
+	private @OneToMany(mappedBy="parent") List<BookNode> childrens;
+	
+	private @OneToMany(mappedBy="bookNode") List<KnowledgePoint> knowledgePoints;
 	
 //	@Transient
 //	private boolean isEnd;
@@ -59,6 +63,7 @@ public class BookNode {
 	public void setName(String name) {
 		this.name = name;
 	}
+
 
 	public TextBook getBook() {
 		return book;
@@ -100,7 +105,20 @@ public class BookNode {
 		this.childrens = childrens;
 	}
 
+	public Byte getStatus() {
+		return status;
+	}
 
-	
+	public void setStatus(Byte status) {
+		this.status = status;
+	}
+
+	public List<KnowledgePoint> getKnowledgePoints() {
+		return knowledgePoints;
+	}
+
+	public void setKnowledgePoints(List<KnowledgePoint> knowledgePoints) {
+		this.knowledgePoints = knowledgePoints;
+	}
 	
 }

@@ -18,38 +18,46 @@
 		</div>
 		<div class="col-md-10">
 			<div>
-				<button class="btn" data-toggle="modal" data-target="#addModal">新增</button>
+				<button class="btn" onclick="clickAddModel();">新增</button>
 			</div>
 			<table id="table" class="table">
 				<caption>
-					<select id="stageSelectMain" name="stage" th:value="${versionManagerSearchForm.stage}">
-						<option value="0" th:selected="${versionManagerSearchForm.stage==0}">请选择</option>
-						<option value="2" th:selected="${versionManagerSearchForm.stage==2}">初中</option>
-						<option value="3" th:selected="${versionManagerSearchForm.stage==3}">高中</option>
+					<select id="stageSelectMain" name="stage" th:value="${textBookManagerSearchForm.stage}">
+						<option value="0" th:selected="${textBookManagerSearchForm.stage==0}">请选择</option>
+						<option value="2" th:selected="${textBookManagerSearchForm.stage==2}">初中</option>
+						<option value="3" th:selected="${textBookManagerSearchForm.stage==3}">高中</option>
 					</select>
 					<select id="subjectSelectMain">
-						<option th:if="${subjectId}==null">请选择</option>
+						<option th:if="${subjectId}==null" th:value="0">请选择</option>
 						<option th:each="subject:${subjects}" th:value="${subject.id}" th:text="${subject.subjectName}"
-						th:selected="${subject.id}==${versionManagerSearchForm.subjectId}">语文</option>
+						th:selected="${subject.id}==${textBookManagerSearchForm.subjectId}">语文</option>
 						<option th:remove="all">数学</option>
 						<option th:remove="all">英语</option>
 					</select>
-					
+					<select id="versionSelectMain">
+						<option th:if="${versionId}==null" th:value="0">请选择</option>
+						<option th:each="version:${versions}" th:value="${version.id}" th:text="${version.versionName}"
+						th:selected="${version.id}==${textBookManagerSearchForm.versionId}">语文</option>
+						<option th:remove="all">数学</option>
+						<option th:remove="all">英语</option>
+					</select>
 				</caption>
 				<thead>
 					<tr>
 						<th>学段</th>
 						<th>科目</th>
 						<th>版本</th>
+						<th>教材</th>
 						<th>操作</th>
 					</tr>
 				</thead>
 				<tbody id="tableData">
-					<tr th:each="version:${versions}">
-						<td th:text="${version.subject.stage}">Tanmay</td>
-						<td th:text="${version.subject.subjectName}">Bangalore</td>
-						<td th:text="${version.versionName}">Bangalore</td>
-						<td>修改 <a th:href="@{/basic/deleteVersion(id=${version.id})}">删除</a>
+					<tr th:each="tb:${textbooks}">
+						<td th:text="${tb.subject.stage}">Tanmay</td>
+						<td th:text="${tb.subject.subjectName}">Bangalore</td>
+						<td th:text="${tb.version.versionName}">Bangalore</td>
+						<td th:text="${tb.bookName}">Bangalore</td>
+						<td>修改 <a th:href="@{/basic/deleteTextBook(id=${tb.id})}">删除</a>
 						</td>
 					</tr>
 					<tr th:remove="all">
@@ -74,10 +82,10 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title" id="myModalLabel">添加版本</h4>
+					<h4 class="modal-title" id="myModalLabel">添加教材</h4>
 				</div>
 				<div class="modal-body">
-					<form id="versionForm" th:object="${version}">
+					<form id="textBookForm" th:object="${textbook}">
 						<div class="form-group">
 							<label for="stage">学段</label>
 							<select id="stageSelect" class="form-control" name="stage">
@@ -94,10 +102,18 @@
 								<option value="2" th:remove="all">数学</option>
 							</select>
 						</div>
-						
 						<div class="form-group">
-							<label for="exampleInputPassword1">版本名称</label>
-							<input type="text" class="form-control" name="versionName" placeholder="请输入版本名称" />
+							<label for="versionName">版本名称</label>
+							<select id="versionSelect" class="form-control" th:field="*{version}">
+								<th:block id="versionOption" th:each="version : ${versions}">
+									<option  th:value="${version.id}" th:text="${version.versionName}">语文</option>
+								</th:block>
+								<option value="2" th:remove="all">数学</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="exampleInputPassword1">教材名称</label>
+							<input type="text" class="form-control" name="bookName" placeholder="请输入教材名称" />
 						</div>
 					</form>
 				</div>
@@ -113,23 +129,13 @@
 </body>
 <script type="text/javascript">
 	$(function() {
-		bindPagination();
-		$("#stageSelect").on("change", function() {
-			var stage = $(this).val()
-			$.ajax({
-				url : "/basic/getSubjects",
-				type : "GET",
-				data : {
-					stage : stage
-				},
-				success : function(data) {
-					$("#subjectSelect").html(data);
-				}
-			});
-		});
 		bindSelect();
-
+		bindPagination();
 	});
+	function clickAddModel(){
+		$("#stageSelect").trigger('change');
+		$("#addModal").modal('show');
+	}
 	function bindPagination(){
 		var totalPage =$("#totalPage").val();
 		$("#pagination-demo").twbsPagination({
@@ -137,7 +143,7 @@
 			visiblePages : 5,
 			onPageClick : function(event, page) {
 				$.ajax({
-					url : "/basic/changeTableData",
+					url : "/basic/changeTableDataForTextBookManager",
 					type : "GET",
 					data : {
 						page : page
@@ -153,11 +159,12 @@
 		$("#stageSelectMain").on("change", function() {
 			var stage = $(this).val()
 			$.ajax({
-				url : "/basic/changeTable",
+				url : "/basic/changeTableForTextBookManager",
 				type : "GET",
 				data : {
 					stage : stage,
-					subjectId:0
+					subjectId:0,
+					versionId:0
 				},
 				success : function(data) {
 					$("#table").replaceWith(data);
@@ -170,11 +177,12 @@
 			var stage = $("#stageSelectMain").val();
 			var subjectId = $(this).val();
 			$.ajax({
-				url : "/basic/changeTable",
+				url : "/basic/changeTableForTextBookManager",
 				type : "GET",
 				data : {
 					stage : stage,
-					subjectId:subjectId
+					subjectId:subjectId,
+					versionId:0
 				},
 				success : function(data) {
 					$("#table").replaceWith(data);
@@ -182,14 +190,60 @@
 					bindPagination();
 				}
 			});
-		})
+		});
+		$("#versionSelectMain").on("change", function() {
+			var stage = $("#stageSelectMain").val();
+			var subjectId = $("#subjectSelectMain").val();
+			var versionId = $("#versionSelectMain").val();
+			$.ajax({
+				url : "/basic/changeTableForTextBookManager",
+				type : "GET",
+				data : {
+					stage : stage,
+					subjectId:subjectId,
+					versionId:versionId
+				},
+				success : function(data) {
+					$("#table").replaceWith(data);
+					bindSelect();
+					bindPagination();
+				}
+			});
+		});
+		$("#stageSelect").on("change", function() {
+			var stage = $(this).val();
+			$.ajax({
+				url : "/basic/getSubjectsForTextBookManager",
+				type : "GET",
+				data : {
+					stage : stage
+				},
+				success : function(data) {
+					$("#subjectSelect").html(data);
+					$("#subjectSelect").trigger('change');
+				}
+			});
+		});
+		$("#subjectSelect").on("change", function() {
+			var subjectId = $(this).val();
+			$.ajax({
+				url : "/basic/getVersionsForTextBookManager",
+				type : "GET",
+				data : {
+					subjectId : subjectId
+				},
+				success : function(data) {
+					$("#versionSelect").html(data);
+				}
+			});
+		});
 	}
 	function submitSubject() {
 		var token = $("meta[name='_csrf']").attr("content");
 		var header = $("meta[name='_csrf_header']").attr("content");
-		var fd = new FormData($("#versionForm")[0]);
+		var fd = new FormData($("#textBookForm")[0]);
 		$.ajax({
-			url : "/basic/addVersion",
+			url : "/basic/addTextBook",
 			type : "POST",
 			data : fd,
 			processData : false, // 告诉jQuery不要去处理发送的数据
@@ -198,7 +252,7 @@
 				xhr.setRequestHeader(header, token);
 			},
 			success : function(data) {
-				location.href = "/basic/versionManagerIndex";
+				location.href = "/basic/textBookManagerIndex";
 			}
 		});
 	};

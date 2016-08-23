@@ -10,6 +10,8 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,6 +40,8 @@ public class VersionManagerController {
 	
 	@Autowired
 	private SubjectRepository subjectRepository;
+	
+	private Logger logger = LoggerFactory.getLogger(VersionManagerController.class);
 	
 	@RequestMapping(value="/versionManagerIndex",method=RequestMethod.GET)
 	public String toIndex(VersionManagerSearchForm form,Model model){

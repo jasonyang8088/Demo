@@ -8,9 +8,10 @@
 	<ul th:fragment="leftmenu" class="list-group">
 		<li class="list-group-item"><a th:href="@{/basic/subjectManagerIndex}">科目管理</a></li>
 		<li class="list-group-item"><a th:href="@{/basic/versionManagerIndex}">版本管理</a></li>
-		<li class="list-group-item">教材管理</li>
-		<li class="list-group-item">章节管理</li>
-		<li class="list-group-item">知识点管理</li>
+		<li class="list-group-item"><a th:href="@{/basic/textBookManagerIndex}">教材管理</a></li>
+		<li class="list-group-item"><a th:href="@{/basic/bookNodeManagerIndex}">章节管理</a></li>
+		<li class="list-group-item"><a th:href="@{/basic/knowledgePointManagerIndex}">教材知识点管理</a></li>
+		<li class="list-group-item"><a th:href="@{/basic/basicKnowledgePointManagerIndex}">基础知识点管理</a></li>
 	</ul>
 </body>
 </html>

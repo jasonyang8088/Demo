@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>Hello World!</title>
+<meta name="_csrf" th:content="${_csrf.token}" />
+<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+<link href="/css/bootstrap.min.css" rel="stylesheet" />
+<script src="/js/jquery-1.12.3.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.twbsPagination.js"></script>
+<style>
+.show1{
+
+}
+.node2{
+	margin-left:30px
+}
+.kp2{
+	margin-left:30px
+}
+.kp3{
+	margin-left:60px
+}
+</style>
+</head>
+<body>
+	<nav th:replace="fragments/headNav::nav"></nav>
+	<div>
+		<div class="col-md-2">
+			<div th:include="fragments/basicDataLeft::leftmenu"></div>
+		</div>
+		<div class="col-md-10">
+			<div id="bookNodeManager">
+				<div>
+					<select id="stageSelectMain" name="stage" th:value="${bookNodeManagerSearchForm.stage}">
+						<option value="2" th:selected="${bookNodeManagerSearchForm.stage==2}">初中</option>
+						<option value="3" th:selected="${bookNodeManagerSearchForm.stage==3}">高中</option>
+					</select> <select id="subjectSelectMain">
+						<option th:each="subject:${subjects}" th:value="${subject.id}" th:text="${subject.subjectName}"
+							th:selected="${subject.id}==${bookNodeManagerSearchForm.subjectId}">语文</option>
+						<option th:remove="all">数学</option>
+						<option th:remove="all">英语</option>
+					</select> <select id="versionSelectMain">
+						<option th:each="version:${versions}" th:value="${version.id}" th:text="${version.versionName}"
+							th:selected="${version.id}==${bookNodeManagerSearchForm.versionId}">语文</option>
+						<option th:remove="all">数学</option>
+						<option th:remove="all">英语</option>
+					</select> <select id="textBookSelectMain">
+						<option th:each="textbook:${textbooks}" th:value="${textbook.id}" th:text="${textbook.bookName}"
+							th:selected="${textbook.id}==${bookNodeManagerSearchForm.textBookId}">语文</option>
+						<option th:remove="all">数学</option>
+						<option th:remove="all">英语</option>
+					</select>
+				</div>
+				<div>
+					<div class="col-md-6">
+						<ul>
+							<th:block th:each="booknode:${booknodes}">
+							<li th:value="${booknode.id}" th:text="${booknode.name}" th:class="'node'+${booknode.depth}"></li>
+							<ul th:if="!${#lists.isEmpty(booknode.knowledgePoints)}">
+								<li th:each="kp:${booknode.knowledgePoints}" th:text="${kp.name}" th:class="'kp'+${kp.depth}"></li>
+							</ul>
+							</th:block>
+						</ul>
+					</div>
+					<div class="col-md-6">
+						<div>
+							<span>上传知识点</span><input type="file" id="file" onchange="uploadFile()"/>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+<script type="text/javascript">
+	$(function() {
+		bindSelect();
+	});
+	function uploadFile() {
+		var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr("content");
+		var textBookId=$("#textBookSelectMain").val();
+		var fd = new FormData();
+		fd.append("file",$("#file")[0].files[0]);
+		fd.append("textBookId",textBookId);
+		$.ajax({
+			url : "/basic/uploadKonwledgePointFile",
+			type : "POST",
+			data : fd,
+			processData : false, // 告诉jQuery不要去处理发送的数据
+			contentType : false, // 告诉jQuery不要去设置Content-Type请求头
+			beforeSend: function(xhr){  
+		        xhr.setRequestHeader(header, token);  
+		    }, 
+			success : function(data) {
+				location.href="/basic/knowledgePointManagerIndex";
+			}
+		});
+	};
+	function bindSelect() {
+		$("#stageSelectMain").on("change", function() {
+			var stage = $(this).val()
+			$.ajax({
+				url : "/basic/changeTableForBookNodeManager",
+				type : "GET",
+				data : {
+					stage : stage,
+					subjectId : 0,
+					versionId : 0,
+					textBookId : 0
+				},
+				success : function(data) {
+					$("#bookNodeManager").replaceWith(data);
+					bindSelect();
+				}
+			});
+		});
+		$("#subjectSelectMain").on("change", function() {
+			var stage = $("#stageSelectMain").val();
+			var subjectId = $(this).val();
+			$.ajax({
+				url : "/basic/changeTableForBookNodeManager",
+				type : "GET",
+				data : {
+					stage : stage,
+					subjectId : subjectId,
+					versionId : 0,
+					textBookId : 0
+				},
+				success : function(data) {
+					$("#bookNodeManager").replaceWith(data);
+					bindSelect();
+				}
+			});
+		});
+		$("#versionSelectMain").on("change", function() {
+			var stage = $("#stageSelectMain").val();
+			var subjectId = $("#subjectSelectMain").val();
+			var versionId = $("#versionSelectMain").val();
+			$.ajax({
+				url : "/basic/changeTableForBookNodeManager",
+				type : "GET",
+				data : {
+					stage : stage,
+					subjectId : subjectId,
+					versionId : versionId,
+					textBookId : 0
+				},
+				success : function(data) {
+					$("#bookNodeManager").replaceWith(data);
+					bindSelect();
+				}
+			});
+		});
+		$("#textBookSelectMain").on("change", function() {
+			var stage = $("#stageSelectMain").val();
+			var subjectId = $("#subjectSelectMain").val();
+			var versionId = $("#versionSelectMain").val();
+			var textBookId = $("#textBookSelectMain").val();
+			$.ajax({
+				url : "/basic/changeTableForBookNodeManager",
+				type : "GET",
+				data : {
+					stage : stage,
+					subjectId : subjectId,
+					versionId : versionId,
+					textBookId : textBookId
+				},
+				success : function(data) {
+					$("#bookNodeManager").replaceWith(data);
+					bindSelect();
+				}
+			});
+		});
+	}
+</script>
+</html>

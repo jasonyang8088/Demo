@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>Spring Security Example</title>
+</head>
+<body>
+	<ul th:fragment="leftmenu" class="list-group">
+		<li class="list-group-item"><a th:href="@{#}">文档列表</a></li>
+		<li class="list-group-item"><a th:href="@{#}">文档上传</a></li>
+		<li class="list-group-item"><a th:href="@{#}">文档二审</a></li>
+		<li class="list-group-item"><a th:href="@{#}">文档终审</a></li>
+	</ul>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>Hello World!</title>
+<meta name="_csrf" th:content="${_csrf.token}" />
+<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+<link href="/css/bootstrap.min.css" rel="stylesheet" />
+<script src="/js/jquery-1.12.3.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.twbsPagination.js"></script>
+<style>
+.show1{
+
+}
+.node2{
+	margin-left:30px
+}
+.bkp2{
+	margin-left:30px
+}
+.bkp3{
+	margin-left:60px
+}
+</style>
+</head>
+<body>
+	<nav th:replace="fragments/headNav::nav"></nav>
+	<div>
+		<div class="col-md-2">
+			<div th:include="fragments/basicDataLeft::leftmenu"></div>
+		</div>
+		<div class="col-md-10">
+			<div id="bookNodeManager">
+				<div>
+					<select id="stageSelectMain" name="stage" th:value="${basicKnowledgePointManagerSearchForm.stage}">
+						<option value="2" th:selected="${basicKnowledgePointManagerSearchForm.stage==2}">初中</option>
+						<option value="3" th:selected="${basicKnowledgePointManagerSearchForm.stage==3}">高中</option>
+					</select> <select id="subjectSelectMain">
+						<option th:each="subject:${subjects}" th:value="${subject.id}" th:text="${subject.subjectName}"
+							th:selected="${subject.id}==${basicKnowledgePointManagerSearchForm.subjectId}">语文</option>
+						<option th:remove="all">数学</option>
+						<option th:remove="all">英语</option>
+					</select> 
+				</div>
+				<div>
+					<div class="col-md-6">
+						<ul>
+							<li th:each="bkp:${basicKnowledgePoints}" th:text="${bkp.name}" th:class="'bkp'+${bkp.depth}"></li>
+						</ul>
+					</div>
+					<div class="col-md-6">
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+<script type="text/javascript">
+	$(function() {
+		bindSelect();
+	});
+	
+	function bindSelect() {
+		$("#stageSelectMain").on("change", function() {
+			var stage = $(this).val()
+			$.ajax({
+				url : "/basic/changeTableForBasicKnowledgePointManager",
+				type : "GET",
+				data : {
+					stage : stage,
+					subjectId : 0
+				},
+				success : function(data) {
+					$("#bookNodeManager").replaceWith(data);
+					bindSelect();
+				}
+			});
+		});
+		$("#subjectSelectMain").on("change", function() {
+			var stage = $("#stageSelectMain").val();
+			var subjectId = $(this).val();
+			$.ajax({
+				url : "/basic/changeTableForBasicKnowledgePointManager",
+				type : "GET",
+				data : {
+					stage : stage,
+					subjectId : subjectId
+				},
+				success : function(data) {
+					$("#bookNodeManager").replaceWith(data);
+					bindSelect();
+				}
+			});
+		});
+	}
+</script>
+</html>

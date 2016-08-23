@@ -11,14 +11,14 @@
 		</div>
 		<div>
 			<ul class="nav navbar-nav">
-				<li class="active">
+				<li th:class="${navmenu==1}?'active':''">
 					<a href="/basic/basicDataIndex">基础数据管理</a>
 				</li>
-				<li>
+				<li  th:class="${navmenu==2}?'active':''">
 					<a href="#">用户权限管理</a>
 				</li>
-				<li>
-					<a href="#">文档资料管理</a>
+				<li  th:class="${navmenu==3}?'active':''">
+					<a href="/document/documentManagerIndex">文档资料管理</a>
 				</li>
 			</ul>
 		</div>

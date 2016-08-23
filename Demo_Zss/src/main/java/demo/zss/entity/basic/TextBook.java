@@ -17,6 +17,8 @@ public class TextBook {
 
 	private @Id @GeneratedValue(strategy=GenerationType.AUTO) Long id;
 	
+	private @ManyToOne @JsonIgnore Subject subject;
+	
 	private @ManyToOne @JsonIgnore Version version;
 	
 	private @Column(length=20,name="book_name") String bookName;
@@ -47,5 +49,11 @@ public class TextBook {
 	}
 	public void setBooknodes(List<BookNode> booknodes) {
 		this.booknodes = booknodes;
+	}
+	public Subject getSubject() {
+		return subject;
+	}
+	public void setSubject(Subject subject) {
+		this.subject = subject;
 	}
 }
