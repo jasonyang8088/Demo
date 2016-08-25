@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
-import demo.zss.controller.basicData.form.BookNodeManagerSearchForm;
+import demo.zss.controller.form.BookNodeManagerSearchForm;
 import demo.zss.entity.basic.BookNode;
 import demo.zss.entity.basic.Subject;
 import demo.zss.entity.basic.TextBook;
@@ -128,7 +128,7 @@ public class BookNodeManagerController {
 	@RequestMapping(value = "uploadBookNodeFile", method = RequestMethod.POST)
 	@ResponseBody
 	public String uploadFile(MultipartFile file, Long textBookId) {
-		logger.info("上传章节文档：" + file.getOriginalFilename());
+		logger.info("上传章节文档：" + file.getOriginalFilename()+";id="+textBookId);
 		TextBook book = textBookRepository.findOne(textBookId);
 		try {
 			InputStream inp = file.getInputStream();

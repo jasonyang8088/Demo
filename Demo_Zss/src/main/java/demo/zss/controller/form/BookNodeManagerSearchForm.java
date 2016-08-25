@@ -1,4 +1,4 @@
-package demo.zss.controller.basicData.form;
+package demo.zss.controller.form;
 
 public class BookNodeManagerSearchForm {
 	

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>Hello World!</title>
+<meta name="_csrf" th:content="${_csrf.token}" />
+<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+<script th:src="@{/js/jquery-1.12.3.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<style>
+.show1 {
+	
+}
+
+.node2 {
+	margin-left: 30px
+}
+
+.kp2 {
+	margin-left: 30px
+}
+
+.kp3 {
+	margin-left: 60px
+}
+</style>
+</head>
+<body>
+	<nav th:replace="fragments/headNav::nav"></nav>
+	<div>
+		<div class="col-md-2">
+			<div th:include="fragments/documentManagerLeft::leftmenu"></div>
+		</div>
+		<div class="col-md-10">
+			<div>
+				<input type="file" id="file" onchange="uploadFile();" />
+				<div>
+					<button data-toggle="modal" data-target="#modal1">通过章节知识点关联</button>
+					<button>只通过知识点关联</button>
+				</div>
+				<form th:object="${document}" th:action="@{/document/addDocument}" method="post">
+					<div>
+						<input type="hidden" id="mongoFileId" name="mongoFileId" />
+						<input type="hidden" id="name" name="name" />
+						<input type="hidden" id="size" name="size" />
+						<input type="hidden" id="docSuffix" name="docSuffix" />
+					</div>
+					<div id="specialDiv">
+						<th:block th:fragment="special" th:if="${documentSpecialSpec.id!=null}">
+							<div>
+								<input type="hidden" name="specialId" th:value="${documentSpecialSpec.id}" />
+								<span th:text="${documentSpecialSpec.msg}"></span>
+							</div>
+						</th:block>
+					</div>
+					<div>
+						<button type="submit">submit</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- 模态框（Modal） -->
+	<div class="modal fade" id="modal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">添加章节关联</h4>
+				</div>
+				<div class="modal-body">
+					<form id="RelationForm">
+						<div id="bookNodeManager">
+							<div>
+								<select id="stageSelectMain" name="stage" th:value="${bookNodeManagerSearchForm.stage}">
+									<option value="2" th:selected="${bookNodeManagerSearchForm.stage==2}">初中</option>
+									<option value="3" th:selected="${bookNodeManagerSearchForm.stage==3}">高中</option>
+								</select> <select id="subjectSelectMain" name="subject" th:object="${subject}">
+									<option th:each="subject:${subjects}" th:value="${subject.id}" th:text="${subject.subjectName}"
+										th:selected="${subject.id}==${bookNodeManagerSearchForm.subjectId}">语文</option>
+									<option th:remove="all">数学</option>
+									<option th:remove="all">英语</option>
+								</select> <select id="versionSelectMain" name="version" th:object="${version}">
+									<option th:each="version:${versions}" th:value="${version.id}" th:text="${version.versionName}"
+										th:selected="${version.id}==${bookNodeManagerSearchForm.versionId}">人教版</option>
+									<option th:remove="all">人教版</option>
+									<option th:remove="all">人教版</option>
+								</select> <select id="textBookSelectMain" name="textBook" th:object="${textBook}">
+									<option th:each="textbook:${textbooks}" th:value="${textbook.id}" th:text="${textbook.bookName}"
+										th:selected="${textbook.id}==${bookNodeManagerSearchForm.textBookId}">六年级</option>
+									<option th:remove="all">七年级</option>
+									<option th:remove="all">八年级</option>
+								</select>
+							</div>
+							<div>
+								<div>
+									<ul>
+										<th:block th:each="booknode:${booknodes}">
+											<li th:class="'show'+${booknode.depth}">
+												<input type="checkbox" name="bookNode" th:object="${bookNode}" th:value="${booknode.id}" />
+												<span th:text="${booknode.name}"></span>
+											</li>
+											<ul th:if="!${#lists.isEmpty(booknode.knowledgePoints)}">
+												<th:block th:each="kp:${booknode.knowledgePoints}">
+													<li th:class="'kp'+${kp.depth}">
+														<input type="checkbox" name="knowledgePoint" th:object="${knowledgePoint}" th:value="${kp.id}" />
+														<span th:text="${kp.name}"></span>
+													</li>
+												</th:block>
+											</ul>
+										</th:block>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary" onclick="submitModal1();">提交更改</button>
+				</div>
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal -->
+
+</body>
+<script type="text/javascript">
+	$(function() {
+		bindSelect();
+	});
+	function bindSelect() {
+		$("#stageSelectMain").on("change", function() {
+			var stage = $(this).val()
+			$.ajax({
+				url : "/document/changeTableForDocumentManager",
+				type : "GET",
+				data : {
+					stage : stage,
+					subjectId : 0,
+					versionId : 0,
+					textBookId : 0
+				},
+				success : function(data) {
+					$("#bookNodeManager").replaceWith(data);
+					bindSelect();
+				}
+			});
+		});
+		$("#subjectSelectMain").on("change", function() {
+			var stage = $("#stageSelectMain").val();
+			var subjectId = $(this).val();
+			$.ajax({
+				url : "/document/changeTableForDocumentManager",
+				type : "GET",
+				data : {
+					stage : stage,
+					subjectId : subjectId,
+					versionId : 0,
+					textBookId : 0
+				},
+				success : function(data) {
+					$("#bookNodeManager").replaceWith(data);
+					bindSelect();
+				}
+			});
+		});
+		$("#versionSelectMain").on("change", function() {
+			var stage = $("#stageSelectMain").val();
+			var subjectId = $("#subjectSelectMain").val();
+			var versionId = $("#versionSelectMain").val();
+			$.ajax({
+				url : "/document/changeTableForDocumentManager",
+				type : "GET",
+				data : {
+					stage : stage,
+					subjectId : subjectId,
+					versionId : versionId,
+					textBookId : 0
+				},
+				success : function(data) {
+					$("#bookNodeManager").replaceWith(data);
+					bindSelect();
+				}
+			});
+		});
+		$("#textBookSelectMain").on("change", function() {
+			var stage = $("#stageSelectMain").val();
+			var subjectId = $("#subjectSelectMain").val();
+			var versionId = $("#versionSelectMain").val();
+			var textBookId = $("#textBookSelectMain").val();
+			$.ajax({
+				url : "/document/changeTableForDocumentManager",
+				type : "GET",
+				data : {
+					stage : stage,
+					subjectId : subjectId,
+					versionId : versionId,
+					textBookId : textBookId
+				},
+				success : function(data) {
+					$("#bookNodeManager").replaceWith(data);
+					bindSelect();
+				}
+			});
+		});
+	}
+	function uploadFile() {
+		var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr("content");
+		var fd = new FormData();
+		fd.append("file", $("#file")[0].files[0]);
+		$.ajax({
+			url : "/document/uploadDocumentFile",
+			type : "POST",
+			data : fd,
+			processData : false, // 告诉jQuery不要去处理发送的数据
+			contentType : false, // 告诉jQuery不要去设置Content-Type请求头
+			beforeSend : function(xhr) {
+				xhr.setRequestHeader(header, token);
+			},
+			success : function(data) {
+				$("#mongoFileId").val(data.mongoFileId);
+				$("#name").val(data.name);
+				$("#size").val(data.size);
+				$("#docSuffix").val(data.docSuffix);
+			}
+		});
+	};
+	function submitModal1() {
+		var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr("content");
+		var fd = new FormData($("#RelationForm")[0]);
+		$.ajax({
+			url : "/document/addRelation",
+			type : "POST",
+			data : fd,
+			processData : false, // 告诉jQuery不要去处理发送的数据
+			contentType : false, // 告诉jQuery不要去设置Content-Type请求头
+			beforeSend : function(xhr) {
+				xhr.setRequestHeader(header, token);
+			},
+			success : function(data) {
+				$("#specialDiv").append(data);
+			}
+		});
+	};
+</script>
+</html>

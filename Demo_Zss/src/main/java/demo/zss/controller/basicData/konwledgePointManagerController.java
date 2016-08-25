@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
-import demo.zss.controller.basicData.form.BookNodeManagerSearchForm;
+import demo.zss.controller.form.BookNodeManagerSearchForm;
 import demo.zss.entity.basic.BasicKnowledgePoint;
 import demo.zss.entity.basic.BookNode;
 import demo.zss.entity.basic.KnowledgePoint;
@@ -69,7 +69,6 @@ public class konwledgePointManagerController {
 
 	@RequestMapping(value = "/knowledgePointManagerIndex", method = RequestMethod.GET)
 	public String toIndex(BookNodeManagerSearchForm form, Model model) {
-		System.out.println(form);
 		List<Subject> subjects = new ArrayList<Subject>();
 		List<Version> versions = new ArrayList<Version>();
 		List<TextBook> textbooks = new ArrayList<TextBook>();
@@ -144,7 +143,8 @@ public class konwledgePointManagerController {
 			InputStream inp = file.getInputStream();
 			Workbook wb = WorkbookFactory.create(inp);
 			Sheet sheet = wb.getSheetAt(0);
-			Object[] array = new Object[6];
+			BookNode booknode = new BookNode();
+			KnowledgePoint[] kps = new KnowledgePoint[5];
 			BasicKnowledgePoint[] bkps = new BasicKnowledgePoint[6];
 			for (int rowNum = 0; rowNum <= sheet.getLastRowNum(); rowNum++) {
 				Row row = sheet.getRow(rowNum);
@@ -157,13 +157,11 @@ public class konwledgePointManagerController {
 						continue;
 					}
 					if (cellNum == 0) {
-						BookNode booknode = bookNodeRepository.findByBookIdAndName(book.getId(),
+						booknode = bookNodeRepository.findByBookIdAndName(book.getId(),
 								cell.getStringCellValue());
-						array[0] = booknode;
 					}
 					if (cellNum == 1) {
-						if (array[0] != null) {
-							BookNode booknode = (BookNode) array[0];
+						if (booknode != null) {
 							KnowledgePoint kp = knowledgePointRepository.findByBookNodeIdAndNameAndDepth(
 									booknode.getId(), cell.getStringCellValue(), (byte) 1);
 							if (kp == null) {
@@ -188,12 +186,11 @@ public class konwledgePointManagerController {
 								}
 								bkps[0] = bkp;
 							}
-							array[1] = kp;
+							kps[0] = kp;
 						}
 					}
 					if (cellNum == 2) {
-						if (array[0] != null) {
-							BookNode booknode = (BookNode) array[0];
+						if (booknode!= null) {
 							KnowledgePoint kp = knowledgePointRepository.findByBookNodeIdAndNameAndDepth(
 									booknode.getId(), cell.getStringCellValue(), (byte) 2);
 							if (kp == null) {
@@ -203,6 +200,7 @@ public class konwledgePointManagerController {
 								kp.setName(cell.getStringCellValue());
 								kp.setStatus((byte) 2);
 								kp.setTextBook(book);
+								kp.setParent(kps[0]);
 								kp.setVersion(book.getVersion());
 								kp.setSubject(book.getSubject());
 								knowledgePointRepository.save(kp);
@@ -219,12 +217,11 @@ public class konwledgePointManagerController {
 								}
 								bkps[1] = bkp;
 							}
-							array[2] = kp;
+							kps[1] = kp;
 						}
 					}
 					if (cellNum == 3) {
-						if (array[0] != null) {
-							BookNode booknode = (BookNode) array[0];
+						if (booknode != null) {
 							KnowledgePoint kp = knowledgePointRepository.findByBookNodeIdAndNameAndDepth(
 									booknode.getId(), cell.getStringCellValue(), (byte) 3);
 							if (kp == null) {
@@ -234,6 +231,7 @@ public class konwledgePointManagerController {
 								kp.setName(cell.getStringCellValue());
 								kp.setStatus((byte) 3);
 								kp.setTextBook(book);
+								kp.setParent(kps[1]);
 								kp.setVersion(book.getVersion());
 								kp.setSubject(book.getSubject());
 								knowledgePointRepository.save(kp);
@@ -250,12 +248,11 @@ public class konwledgePointManagerController {
 								}
 								bkps[2] = bkp;
 							}
-							array[3] = kp;
+							kps[2] = kp;
 						}
 					}
 					if (cellNum == 4) {
-						if (array[0] != null) {
-							BookNode booknode = (BookNode) array[0];
+						if (booknode != null) {
 							KnowledgePoint kp = knowledgePointRepository.findByBookNodeIdAndNameAndDepth(
 									booknode.getId(), cell.getStringCellValue(), (byte) 4);
 							if (kp == null) {
@@ -265,6 +262,7 @@ public class konwledgePointManagerController {
 								kp.setName(cell.getStringCellValue());
 								kp.setStatus((byte) 4);
 								kp.setTextBook(book);
+								kp.setParent(kps[2]);
 								kp.setVersion(book.getVersion());
 								kp.setSubject(book.getSubject());
 								knowledgePointRepository.save(kp);
@@ -281,12 +279,11 @@ public class konwledgePointManagerController {
 								}
 								bkps[3] = bkp;
 							}
-							array[4] = kp;
+							kps[3] = kp;
 						}
 					}
 					if (cellNum == 5) {
-						if (array[0] != null) {
-							BookNode booknode = (BookNode) array[0];
+						if (booknode!= null) {
 							KnowledgePoint kp = knowledgePointRepository.findByBookNodeIdAndNameAndDepth(
 									booknode.getId(), cell.getStringCellValue(), (byte) 5);
 							if (kp == null) {
@@ -296,6 +293,7 @@ public class konwledgePointManagerController {
 								kp.setName(cell.getStringCellValue());
 								kp.setStatus((byte) 5);
 								kp.setTextBook(book);
+								kp.setParent(kps[3]);
 								kp.setVersion(book.getVersion());
 								kp.setSubject(book.getSubject());
 								knowledgePointRepository.save(kp);
@@ -312,7 +310,7 @@ public class konwledgePointManagerController {
 								}
 								bkps[4] = bkp;
 							}
-							array[5] = kp;
+							kps[4] = kp;
 						}
 					}
 				}

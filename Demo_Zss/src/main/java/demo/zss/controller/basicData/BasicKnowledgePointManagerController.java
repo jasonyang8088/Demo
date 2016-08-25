@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import demo.zss.controller.basicData.form.BasicKnowledgePointManagerSearchForm;
+import demo.zss.controller.form.BasicKnowledgePointManagerSearchForm;
 import demo.zss.entity.basic.BasicKnowledgePoint;
 import demo.zss.entity.basic.Subject;
 import demo.zss.repository.basic.BasicKnowledgePointRepository;

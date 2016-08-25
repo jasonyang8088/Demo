@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import demo.zss.controller.basicData.form.VersionManagerSearchForm;
+import demo.zss.controller.form.VersionManagerSearchForm;
 import demo.zss.entity.basic.Subject;
 import demo.zss.entity.basic.Version;
 import demo.zss.repository.basic.SubjectRepository;

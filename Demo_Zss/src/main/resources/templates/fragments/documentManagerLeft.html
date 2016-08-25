@@ -6,10 +6,10 @@
 </head>
 <body>
 	<ul th:fragment="leftmenu" class="list-group">
-		<li class="list-group-item"><a th:href="@{#}">文档列表</a></li>
-		<li class="list-group-item"><a th:href="@{#}">文档上传</a></li>
-		<li class="list-group-item"><a th:href="@{#}">文档二审</a></li>
-		<li class="list-group-item"><a th:href="@{#}">文档终审</a></li>
+		<li class="list-group-item"><a th:href="@{/document/documentListManager}" th:class="${navleft==1}?'active':''">文档列表</a></li>
+		<li class="list-group-item"><a th:href="@{/document/uploadFileManager}" th:class="${navleft==2}?'active':''">文档上传</a></li>
+		<li class="list-group-item"><a th:href="@{#}" th:class="${navleft==3}?'active':''">文档二审</a></li>
+		<li class="list-group-item"><a th:href="@{#}" th:class="${navleft==4}?'active':''">文档终审</a></li>
 	</ul>
 </body>
 </html>

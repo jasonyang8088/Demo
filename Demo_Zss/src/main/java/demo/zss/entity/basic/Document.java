@@ -33,6 +33,9 @@ public class Document {
 	private User createUser;
 	
 	private String intro;
+	
+	private String mongoFileId;
+	
 
 	public Long getId() {
 		return id;
@@ -98,7 +101,13 @@ public class Document {
 	public void setIntro(String intro) {
 		this.intro = intro;
 	}
-	
-	
+
+	public String getMongoFileId() {
+		return mongoFileId;
+	}
+
+	public void setMongoFileId(String mongoFileId) {
+		this.mongoFileId = mongoFileId;
+	}
 	
 }
