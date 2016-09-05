@@ -1,6 +1,8 @@
 package demo.zss.controller.basicData;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +21,13 @@ public class SubjectManagerController {
 	
 	@RequestMapping(value="subjectManagerIndex",method=RequestMethod.GET)
 	public String toIndex(Model model){
-		model.addAttribute("subjects", subjectRepository.findAll());
-		model.addAttribute("leftmenu", 1);
+		model.addAttribute("navmenu", 1);
+		model.addAttribute("navleft", 1);
+		PageRequest page=new PageRequest(0, 10);
+		Page<Subject> subjects=subjectRepository.findAll(page);
+		model.addAttribute("totalPage", subjects.getTotalPages());
+		model.addAttribute("subjects", subjects.getContent());
+		model.addAttribute("totalNum", subjects.getTotalElements());
 		return "/basic/subjectManagerIndex";
 	}
 	
@@ -38,6 +45,16 @@ public class SubjectManagerController {
 		subjectRepository.delete(id);
 		model.addAttribute("subjects", subjectRepository.findAll());
 		return "/basic/subjectManagerIndex";
+	}
+	
+	@RequestMapping(value="/changeTableDataForSubject")
+	public String changeTableData(Integer page,Model model){
+		PageRequest pageRequest=new PageRequest(page-1, 10);
+		Page<Subject> subjects=subjectRepository.findAll(pageRequest);
+		model.addAttribute("totalPage", subjects.getTotalPages());
+		model.addAttribute("subjects", subjects.getContent());
+		model.addAttribute("totalNum", subjects.getTotalElements());
+		return "/basic/subjectManagerIndex::#tableData";
 	}
 
 }

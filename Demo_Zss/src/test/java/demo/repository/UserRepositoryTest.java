@@ -39,13 +39,13 @@ public class UserRepositoryTest {
 	@Rollback(false)
 	public void addUser(){
 		User user =new User();
-		user.setUsername("user");
-		user.setPassword("user");
+		user.setUsername("admin");
+		user.setPassword("admin");
 		Role role = new Role();
-		role.setName("普通用户");
+		role.setName("admin");
 		Authority authority= new Authority();
-		authority.setName("user");
-		authority.setAuthority("/user");
+		authority.setName("admin");
+		authority.setAuth("/admin");
 		authorityRepository.save(authority);
 		roleRepository.save(role);
 		List<Role> roles = new ArrayList<Role>();

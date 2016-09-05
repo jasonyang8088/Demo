@@ -6,6 +6,8 @@ public class VersionManagerSearchForm {
 	
 	private Long subjectId;
 	
+	private Byte status;
+	
 
 	public Byte getStage() {
 		return stage;
@@ -22,7 +24,12 @@ public class VersionManagerSearchForm {
 	public void setSubjectId(Long subjectId) {
 		this.subjectId = subjectId;
 	}
-	
-	
 
+	public Byte getStatus() {
+		return status;
+	}
+
+	public void setStatus(Byte status) {
+		this.status = status;
+	}
 }

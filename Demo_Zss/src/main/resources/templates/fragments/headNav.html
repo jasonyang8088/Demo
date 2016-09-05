@@ -2,26 +2,25 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
-<title>Spring Security Example</title>
+<title>headNav</title>
 </head>
 <body>
-	<nav th:fragment="nav" class="navbar navbar-default" role="navigation">
+	<nav th:fragment="nav" class="navbar navbar-default cmn-nav" role="navigation">
 		<div class="navbar-header">
-			<a class="navbar-brand" href="#">数据管理系统</a>
+			<a class="navbar-brand" href="/document/documentManagerIndex">数据管理系统</a>
 		</div>
-		<div>
-			<ul class="nav navbar-nav">
-				<li th:class="${navmenu==1}?'active':''">
-					<a href="/basic/basicDataIndex">基础数据管理</a>
-				</li>
-				<li  th:class="${navmenu==2}?'active':''">
-					<a href="#">用户权限管理</a>
-				</li>
-				<li  th:class="${navmenu==3}?'active':''">
-					<a href="/document/documentManagerIndex">文档资料管理</a>
-				</li>
-			</ul>
-		</div>
+		<ul class="nav navbar-nav">
+			<li th:class="${navmenu==1}?'active':''">
+				<a href="/basic/basicDataIndex">基础数据管理</a>
+			</li>
+			<li sec:authorize-url="/user"  th:class="${navmenu==2}?'active':''">
+				<a href="/user/userManagerIndex">用户权限管理</a>
+			</li>
+			<li  th:class="${navmenu==3}?'active':''">
+				<a href="/document/documentManagerIndex">文档资料管理</a>
+			</li>
+		</ul>
+		<form th:action="@{/logout}" method="post" class="btn_logout"><input type="submit" value="退出"/></form>
 	</nav>
 </body>
 </html>

@@ -55,6 +55,9 @@ public class DocumentSpecialSpec {
 	@Transient
 	private KnowledgePoint knowledgePoint;
 
+	@ManyToOne
+	private BasicKnowledgePoint basicKnowledgePoint;
+	
 	@Transient
 	private String msg;
 
@@ -174,6 +177,14 @@ public class DocumentSpecialSpec {
 		return knowledgePoint5;
 	}
 
+	public BasicKnowledgePoint getBasicKnowledgePoint() {
+		return basicKnowledgePoint;
+	}
+
+	public void setBasicKnowledgePoint(BasicKnowledgePoint basicKnowledgePoint) {
+		this.basicKnowledgePoint = basicKnowledgePoint;
+	}
+
 	public void setKnowledgePoint5(KnowledgePoint knowledgePoint5) {
 		this.knowledgePoint5 = knowledgePoint5;
 	}
@@ -187,39 +198,39 @@ public class DocumentSpecialSpec {
 		} else if (stage == 3) {
 			stagename = "高中";
 		}
-		sb.append("/" + stagename);
+		sb.append("" + stagename);
 		if (null != this.getSubject()) {
-			sb.append("/" + this.getSubject().getSubjectName());
+			sb.append(">" + this.getSubject().getSubjectName());
 		}
 		if (null != this.getVersion()) {
-			sb.append("/" + this.getVersion().getVersionName());
+			sb.append(">" + this.getVersion().getVersionName());
 		}
 		if(null!=this.getTextBook()){
-			sb.append("/"+this.getTextBook().getBookName());
+			sb.append(">"+this.getTextBook().getBookName());
 		}
 		if(null!=this.getBookNode1()){
-			sb.append("/"+this.getBookNode1().getName());
+			sb.append(">"+this.getBookNode1().getName());
 		}
 		if(null!=this.getBookNode2()){
-			sb.append("/"+this.getBookNode2().getName());
+			sb.append(">"+this.getBookNode2().getName());
 		}
 		if(null!=this.getBookNode3()){
-			sb.append("/"+this.getBookNode3().getName());
+			sb.append(">"+this.getBookNode3().getName());
 		}
 		if(null!=this.getKnowledgePoint1()){
-			sb.append("/"+this.getKnowledgePoint1().getName());
+			sb.append(">"+this.getKnowledgePoint1().getName());
 		}
 		if(null!=this.getKnowledgePoint2()){
-			sb.append("/"+this.getKnowledgePoint2().getName());
+			sb.append(">"+this.getKnowledgePoint2().getName());
 		}
 		if(null!=this.getKnowledgePoint3()){
-			sb.append("/"+this.getKnowledgePoint3().getName());
+			sb.append(">"+this.getKnowledgePoint3().getName());
 		}
 		if(null!=this.getKnowledgePoint4()){
-			sb.append("/"+this.getKnowledgePoint4().getName());
+			sb.append(">"+this.getKnowledgePoint4().getName());
 		}
 		if(null!=this.getKnowledgePoint5()){
-			sb.append("/"+this.getKnowledgePoint5().getName());
+			sb.append(">"+this.getKnowledgePoint5().getName());
 		}
 		return sb.toString();
 	}

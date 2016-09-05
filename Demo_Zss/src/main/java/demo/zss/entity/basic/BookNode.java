@@ -28,26 +28,16 @@ public class BookNode {
 	
 	private Byte status;   //0:失效   1：正常
 	
+	private Integer chapterId;
+	
+	private Integer nodeId;
+	
 	private @ManyToOne BookNode parent;
 	
 	private @OneToMany(mappedBy="parent") List<BookNode> childrens;
 	
 	private @OneToMany(mappedBy="bookNode") List<KnowledgePoint> knowledgePoints;
 	
-//	@Transient
-//	private boolean isEnd;
-//	
-//	
-//
-//	public boolean isEnd() {
-//		if(this.childrens.size()==0){
-//			return true;
-//		}else {
-//			return false;
-//		}
-//		
-//	}
-
 	public Long getId() {
 		return id;
 	}
@@ -120,5 +110,20 @@ public class BookNode {
 	public void setKnowledgePoints(List<KnowledgePoint> knowledgePoints) {
 		this.knowledgePoints = knowledgePoints;
 	}
-	
+
+	public Integer getChapterId() {
+		return chapterId;
+	}
+
+	public void setChapterId(Integer chapterId) {
+		this.chapterId = chapterId;
+	}
+
+	public Integer getNodeId() {
+		return nodeId;
+	}
+
+	public void setNodeId(Integer nodeId) {
+		this.nodeId = nodeId;
+	}
 }

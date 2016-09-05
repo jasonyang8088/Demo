@@ -8,9 +8,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class MainPageController {
 	
+	@RequestMapping(value="/",method=RequestMethod.GET)
+	public String toInde(Model model){
+		return "/index";
+	}
+	
 	@RequestMapping(value="/index",method=RequestMethod.GET)
 	public String toIndex(Model model){
-		model.addAttribute("navmenu", 1);
 		return "/index";
 	}
 

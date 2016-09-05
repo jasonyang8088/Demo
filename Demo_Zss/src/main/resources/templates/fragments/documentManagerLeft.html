@@ -5,11 +5,11 @@
 <title>Spring Security Example</title>
 </head>
 <body>
-	<ul th:fragment="leftmenu" class="list-group">
-		<li class="list-group-item"><a th:href="@{/document/documentListManager}" th:class="${navleft==1}?'active':''">文档列表</a></li>
-		<li class="list-group-item"><a th:href="@{/document/uploadFileManager}" th:class="${navleft==2}?'active':''">文档上传</a></li>
-		<li class="list-group-item"><a th:href="@{#}" th:class="${navleft==3}?'active':''">文档二审</a></li>
-		<li class="list-group-item"><a th:href="@{#}" th:class="${navleft==4}?'active':''">文档终审</a></li>
-	</ul>
+	<div th:fragment="leftmenu" class="list-group">
+		<a th:href="@{/document/documentListManager}" class="list-group-item" th:classappend="${navleft==1}?'active':''">文档列表</a>
+		<a th:href="@{/document/uploadFileManager}"  class="list-group-item" th:classappend="${navleft==2}?'active':''">文档上传</a>
+		<a th:href="@{/document/documentSecondCheckManager}" class="list-group-item" th:classappend="${navleft==3}?'active':''">文档二审</a>
+		<a th:href="@{#}" class="list-group-item" th:classappend="${navleft==4}?'active':''">文档终审</a>
+	</div>
 </body>
 </html>

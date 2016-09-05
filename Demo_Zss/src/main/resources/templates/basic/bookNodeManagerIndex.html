@@ -6,15 +6,17 @@
 <meta name="_csrf" th:content="${_csrf.token}" />
 <meta name="_csrf_header" th:content="${_csrf.headerName}" />
 <link href="/css/bootstrap.min.css" rel="stylesheet" />
-<script src="/js/jquery-1.12.3.min.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-<script src="/js/jquery.twbsPagination.js"></script>
+<link th:href="@{/css/common.css}" rel="stylesheet" />
 <style>
-.show1{
-
+.show1 {
+	
 }
-.show2{
-	margin-left:30px
+
+.show2 {
+	margin-left: 30px
+}
+.show3 {
+	margin-left: 60px
 }
 </style>
 </head>
@@ -49,45 +51,109 @@
 				</div>
 				<div>
 					<div class="col-md-6">
-						<ul>
-							<li th:each="booknode:${booknodes}" th:value="${booknode.id}" th:text="${booknode.name}" th:class="'show'+${booknode.depth}"></li>
+						<ul class="tree">
+							<li th:each="booknode:${booknodes}">
+								<span class="glyphicon glyphicon-plus " aria-hidden="true"></span> <span th:value="${booknode.id}"
+									th:text="${booknode.name}" th:class="'show'+${booknode.depth}"></span> <span th:text="${booknode.orderNo}"
+									th:class="'show'+${booknode.depth}"></span>
+								<a class="updateBookNode" th:href="@{/basic/getBookNode(id=${booknode.id})}">
+									<span class="glyphicon glyphicon-cog" aria-hidden="true" data-toggle="tooltip" data-placement="top"
+										title="修改"></span>
+								</a>
+							</li>
 						</ul>
 					</div>
 					<div class="col-md-6">
 						<div>
-							<span>上传</span><input type="file" id="file" onchange="uploadFile()"/>
+							<span>上传</span>
+							<input type="file" id="file" onchange="uploadFile()" />
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-
-</body>
+	<!-- 模态框（Modal） -->
+	<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">章节管理</h4>
+				</div>
+				<div class="modal-body">
+					<form id="bookNodeForm" th:object="${bookNode}">
+						<input type="hidden" th:field="*{id}" />
+						<input type="hidden" th:field="*{depth}" />
+						<input type="hidden" th:field="*{book}" />
+						<div class="form-group">
+							<label>请输入章节名称</label>
+							<input type="text" class="form-control" th:field="*{name}" placeholder="请输入教材名称" />
+						</div>
+						<div class="form-group">
+							<label>状态</label>
+							<select id="subjectSelect" class="form-control" th:field="*{status}">
+								<option value="1">正常</option>
+								<option value="0">失效</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label>排序Id</label>
+							<input type="text" class="form-control" th:field="*{orderNo}" placeholder="请输入排序ID" />
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary" onclick="submitSubject();">提交更改</button>
+				</div>
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal -->
+<script src="/js/jquery-1.12.3.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.twbsPagination.js"></script>
 <script type="text/javascript">
 	$(function() {
 		bindSelect();
+		bindUpdate();
 	});
 	function uploadFile() {
 		var token = $("meta[name='_csrf']").attr("content");
 		var header = $("meta[name='_csrf_header']").attr("content");
-		var textBookId=$("#textBookSelectMain").val();
+		var textBookId = $("#textBookSelectMain").val();
 		var fd = new FormData();
-		fd.append("file",$("#file")[0].files[0]);
-		fd.append("textBookId",textBookId);
+		fd.append("file", $("#file")[0].files[0]);
+		fd.append("textBookId", textBookId);
 		$.ajax({
 			url : "/basic/uploadBookNodeFile",
 			type : "POST",
 			data : fd,
 			processData : false, // 告诉jQuery不要去处理发送的数据
 			contentType : false, // 告诉jQuery不要去设置Content-Type请求头
-			beforeSend: function(xhr){  
-		        xhr.setRequestHeader(header, token);  
-		    }, 
+			beforeSend : function(xhr) {
+				xhr.setRequestHeader(header, token);
+			},
 			success : function(data) {
-				location.href="/basic/bookNodeManagerIndex";
+				location.href = "/basic/bookNodeManagerIndex";
 			}
 		});
+	};
+	function bindUpdate() {
+		$(".updateBookNode").on("click", function(event) {
+			event.preventDefault();
+			var url = $(this).attr("href");
+			$.ajax({
+				url : url,
+				type : "GET",
+				success : function(data) {
+					$("#bookNodeForm").replaceWith(data);
+				}
+			});
+			$("#updateModal").modal("show");
+		})
 	};
 	function bindSelect() {
 		$("#stageSelectMain").on("change", function() {
@@ -104,6 +170,7 @@
 				success : function(data) {
 					$("#bookNodeManager").replaceWith(data);
 					bindSelect();
+					bindUpdate();
 				}
 			});
 		});
@@ -122,6 +189,7 @@
 				success : function(data) {
 					$("#bookNodeManager").replaceWith(data);
 					bindSelect();
+					bindUpdate();
 				}
 			});
 		});
@@ -141,6 +209,7 @@
 				success : function(data) {
 					$("#bookNodeManager").replaceWith(data);
 					bindSelect();
+					bindUpdate();
 				}
 			});
 		});
@@ -161,9 +230,29 @@
 				success : function(data) {
 					$("#bookNodeManager").replaceWith(data);
 					bindSelect();
+					bindUpdate();
 				}
 			});
 		});
-	}
+	};
+	function submitSubject() {
+		var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr("content");
+		var fd = new FormData($("#bookNodeForm")[0]);
+		$.ajax({
+			url : "/basic/addBookNode",
+			type : "POST",
+			data : fd,
+			processData : false, // 告诉jQuery不要去处理发送的数据
+			contentType : false, // 告诉jQuery不要去设置Content-Type请求头
+			beforeSend : function(xhr) {
+				xhr.setRequestHeader(header, token);
+			},
+			success : function(data) {
+				location.href = "/basic/bookNodeManagerIndex";
+			}
+		});
+	};
 </script>
+</body>
 </html>

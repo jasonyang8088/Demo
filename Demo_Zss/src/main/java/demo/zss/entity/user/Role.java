@@ -20,8 +20,6 @@ public class Role {
 	@Column(unique = true,nullable = false)
 	private String name;
 	
-	@OneToMany
-	private List<Role> roles;
 	
 	@OneToMany(fetch = FetchType.EAGER)
 	private List<Authority> authorities;
@@ -44,13 +42,6 @@ public class Role {
 		this.name = name;
 	}
 
-	public List<Role> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
-	}
 
 	public List<Authority> getAuthorities() {
 		return authorities;

@@ -53,7 +53,7 @@ public class UserDetailsAdapter implements UserDetails {
 			}
 			if (authList != null) {
 				for (Authority auth : authList) {
-					authorities.add(new SimpleGrantedAuthority("ROLE_"+auth.getAuthority()));
+					authorities.add(new SimpleGrantedAuthority("ROLE_"+auth.getAuth()));
 				}
 			}
 		}

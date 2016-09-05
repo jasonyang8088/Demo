@@ -17,7 +17,7 @@ public class Authority{
 	private String name;
 	
 	@Column(unique = true,nullable = false)
-	private String authority;
+	private String auth;
 	
 	
 
@@ -37,14 +37,12 @@ public class Authority{
 		this.name = name;
 	}
 
-	public String getAuthority() {
-		return authority;
+	public String getAuth() {
+		return auth;
 	}
 
-	public void setAuthority(String authority) {
-		this.authority = authority;
+	public void setAuth(String auth) {
+		this.auth = auth;
 	}
 	
-	
-
 }

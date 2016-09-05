@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>Hello World!</title>
+<meta name="_csrf" th:content="${_csrf.token}" />
+<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+<link th:href="@{/css/common.css}" rel="stylesheet" />
+<style type="text/css">
+button{
+	margin:0;
+	padding: 0;
+}
+</style>
+</head>
+<body>
+	<nav th:replace="fragments/headNav::nav"></nav>
+	<div>
+		<div class="col-md-2">
+			<div th:include="fragments/userManagerLeft::leftmenu"></div>
+		</div>
+		<div class="col-md-10">
+			<div>
+				<button class="btn" onclick="addModal()">新增</button>
+			</div>
+			<table class="table table-bordered table-hover">
+				<caption>用户列表</caption>
+				<thead>
+					<tr>
+						<th>序号</th>
+						<th>权限名称</th>
+						<th>权限Url</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="auth:${authoritys}">
+						<td th:text="${auth.id}"></td>
+						<td th:text="${auth.name}"></td>
+						<td th:text="${auth.auth}"></td>
+						<td><button style="border:1px;" th:onclick="|javascript:toUpdate(${auth.id})|">修改</button></td>
+					</tr>
+					<tr th:remove="all">
+						<td>Sachin</td>
+						<td>Mumbai</td>
+					</tr>
+				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="4">
+							<input id="totalPage" type="hidden" th:value="${totalPage}"/>
+							<ul id="pagination-demo" th:attr="totalPage='${totalPage}'" class="pagination-sm"></ul>
+						</td>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+	</div>
+	<!-- 模态框（Modal） -->
+	<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">添加基础权限</h4>
+				</div>
+				<div class="modal-body">
+					<form id="authorityForm" th:object="${authority}">
+						<input type="hidden" th:field="*{id}"/>
+						<div class="form-group">
+							<label>请输入权限名称</label>
+							<input type="text" class="form-control" th:field="*{name}" name="name" placeholder="请输入权限名称" />
+						</div>
+						<div class="form-group">
+							<label>请输入权限Url</label>
+							<input type="text" class="form-control" th:field="*{auth}" name="authority" placeholder="请输入权限Url"/>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary" onclick="submitSubject();">提交更改</button>
+				</div>
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal -->
+<script th:src="@{/js/jquery-1.12.3.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/jquery.twbsPagination.js}"></script>
+<script type="text/javascript">
+	$(function() {
+		bindPagination();
+	});
+	function bindPagination(){
+		var totalPage =$("#totalPage").val();
+		$("#pagination-demo").twbsPagination({
+			totalPages : totalPage,
+			visiblePages : 5,
+			onPageClick : function(event, page) {
+				$.ajax({
+					url : "/basic/changeTableData",
+					type : "GET",
+					data : {
+						page : page
+					},
+					success : function(data) {
+						$("#tableData").replaceWith(data);
+					}
+				});
+			}
+		});
+	}
+	function submitSubject() {
+		var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr("content");
+		var fd = new FormData($("#authorityForm")[0]);
+		$.ajax({
+			url : "/user/addAuthority",
+			type : "POST",
+			data : fd,
+			processData : false, // 告诉jQuery不要去处理发送的数据
+			contentType : false, // 告诉jQuery不要去设置Content-Type请求头
+			beforeSend : function(xhr) {
+				xhr.setRequestHeader(header, token);
+			},
+			success : function(data) {
+				location.href = "/user/authorityManager";
+			}
+		});
+	};
+	function toUpdate(id){
+		$.ajax({
+			url : "/user/getAuthority/"+id,
+			type : "GET",
+			success : function(data) {
+				$("#authorityForm").replaceWith(data);
+				$("#addModal").modal("show");
+			}
+		});
+	};
+	function addModal(){
+		$("#id").val();
+		$("#addModal").modal("show");
+	}
+</script>
+</body>
+</html>

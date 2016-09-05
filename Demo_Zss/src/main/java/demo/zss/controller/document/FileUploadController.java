@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -19,9 +20,11 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import demo.zss.controller.form.BookNodeManagerSearchForm;
+import demo.zss.entity.basic.BasicKnowledgePoint;
 import demo.zss.entity.basic.BookNode;
 import demo.zss.entity.basic.Document;
 import demo.zss.entity.basic.DocumentSpecialSpec;
+import demo.zss.entity.basic.KnowledgePoint;
 import demo.zss.entity.basic.Subject;
 import demo.zss.entity.basic.TextBook;
 import demo.zss.entity.basic.Version;
@@ -52,66 +55,93 @@ public class FileUploadController {
 
 	@Autowired
 	private BookNodeRepository bookNodeRepository;
-	
+
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private DocumentRepository documentRepository;
-	
+
 	@Autowired
 	private DocumentSpecialSpecService documentSpecialSpecService;
-	
+
 	@Autowired
 	private DocumentSpecialSpecRepository documentSpecialSpecRepository;
-	
+
 	@Autowired
-	private MDocumentRepository mDocumentRepository;	
-	
-	@RequestMapping(value="/uploadFileManager",method=RequestMethod.GET)
-	public String toIndex(BookNodeManagerSearchForm form,Model model){
+	private MDocumentRepository mDocumentRepository;
+
+	@RequestMapping(value = "/uploadFileManager", method = RequestMethod.GET)
+	public String toIndex(BookNodeManagerSearchForm form, Model model) {
+		model.addAttribute("navmenu", 3);
 		model.addAttribute("navleft", 2);
 		model.addAttribute("document", new Document());
 		model.addAttribute("documentSpecialSpec", new DocumentSpecialSpec());
 		return "/document/documentUploadManager";
 	}
-	
-	@RequestMapping(value="/addRelation",method=RequestMethod.POST)
-	public String addRelation(BookNodeManagerSearchForm form,DocumentSpecialSpec documentSpecialSpec,Model model){
+
+	@RequestMapping(value = "/addRelation", method = RequestMethod.POST)
+	public String addRelation(BookNodeManagerSearchForm form, DocumentSpecialSpec documentSpecialSpec, Model model) {
 		documentSpecialSpec = documentSpecialSpecService.returnSpecial(documentSpecialSpec);
 		model.addAttribute("documentSpecialSpec", documentSpecialSpec);
 		return "/document/documentUploadManager::special";
 	}
-	
-	@RequestMapping(value="/addDocument",method=RequestMethod.POST)
-	public String addDocument(Document document,Long[] specialId,Model model){
-		List<DocumentSpecialSpec> specials=new ArrayList<DocumentSpecialSpec>();
-		if(0<specialId.length){
-			for(Long id :specialId){
-				DocumentSpecialSpec spec=documentSpecialSpecRepository.findOne(id);
+
+	@RequestMapping(value = "/addOtherRelation/{specId}", method = RequestMethod.GET)
+	public String addOtherRelation(@PathVariable("specId") Long specId, Model model) {
+		DocumentSpecialSpec spec = documentSpecialSpecRepository.findOne(specId);
+		List<DocumentSpecialSpec> otherSpecs = new ArrayList<DocumentSpecialSpec>();
+		if (spec != null) {
+			BasicKnowledgePoint bkp = spec.getBasicKnowledgePoint();
+			if (bkp!=null&&0 < bkp.getKnowledgePoints().size()) {
+				for (KnowledgePoint kp : bkp.getKnowledgePoints()) {
+					DocumentSpecialSpec spec1 = new DocumentSpecialSpec();
+					spec1.setKnowledgePoint(kp);
+					spec1.setSubject(kp.getSubject());
+					spec1.setVersion(kp.getVersion());
+					spec1.setTextBook(kp.getTextBook());
+					spec1=documentSpecialSpecService.returnSpecial(spec1);
+					if(spec1.getId()==specId){
+						continue;
+					}
+					otherSpecs.add(spec1);
+				}
+			}
+		}
+		model.addAttribute("otherSpecs", otherSpecs);
+		return "/document/documentUploadManager::#otherSpec";
+	}
+
+	@RequestMapping(value = "/addDocument", method = RequestMethod.POST)
+	public String addDocument(Document document, Long[] specialId, Model model) {
+		List<DocumentSpecialSpec> specials = new ArrayList<DocumentSpecialSpec>();
+		if (0 < specialId.length) {
+			for (Long id : specialId) {
+				DocumentSpecialSpec spec = documentSpecialSpecRepository.findOne(id);
 				specials.add(spec);
 			}
 		}
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String username=userDetails.getUsername();
+		String username = userDetails.getUsername();
 		User user = userRepository.findByUsername(username);
 		document.setCreateUser(user);
+		document.setStatus((byte) 2);
 		document.setCreateTime(new Date());
 		document.setDocumentSpecialSpecs(specials);
 		documentRepository.save(document);
 		return "redirect:/document/uploadFileManager";
 	}
-	
-	@RequestMapping(value="/uploadDocumentFile",method=RequestMethod.POST)
+
+	@RequestMapping(value = "/uploadDocumentFile", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String,Object> uploadFile(MultipartFile file) {
-		MDocument mdoc= new MDocument();
-		Map<String,Object> map=new HashMap<String,Object>();
+	public Map<String, Object> uploadFile(MultipartFile file) {
+		MDocument mdoc = new MDocument();
+		Map<String, Object> map = new HashMap<String, Object>();
 		try {
-			String name=file.getOriginalFilename();
-			Long size=file.getSize();
-			String types[]=name.split("\\.");
-			String type=types[types.length-1];
+			String name = file.getOriginalFilename();
+			Long size = file.getSize();
+			String types[] = name.split("\\.");
+			String type = types[types.length - 1];
 			mdoc.setFile(file.getBytes());
 			mdoc.setName(name);
 			mdoc.setType(type);
@@ -126,7 +156,7 @@ public class FileUploadController {
 		}
 		return map;
 	}
-	
+
 	@RequestMapping(value = "/changeTableForDocumentManager")
 	public String changeTable(BookNodeManagerSearchForm form, Model model) {
 		List<Subject> subjects = new ArrayList<Subject>();

@@ -5,10 +5,8 @@
 <title>Hello World!</title>
 <meta name="_csrf" th:content="${_csrf.token}" />
 <meta name="_csrf_header" th:content="${_csrf.headerName}" />
-<link href="/css/bootstrap.min.css" rel="stylesheet" />
-<script src="/js/jquery-1.12.3.min.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-<script src="/js/jquery.twbsPagination.js"></script>
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+<link th:href="@{/css/common.css}" rel="stylesheet" />
 <style>
 .show1{
 
@@ -57,7 +55,9 @@
 		</div>
 	</div>
 
-</body>
+<script src="/js/jquery-1.12.3.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.twbsPagination.js"></script>
 <script type="text/javascript">
 	$(function() {
 		bindSelect();
@@ -97,4 +97,5 @@
 		});
 	}
 </script>
+</body>
 </html>

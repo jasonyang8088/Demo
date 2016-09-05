@@ -3,6 +3,8 @@
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
 <title>Hello World!</title>
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+<link th:href="@{/css/common.css}" rel="stylesheet" />
 </head>
 <body>
 	<form action="#" th:action="@{/basic/addVersion}" th:object="${version}" method="post">
@@ -19,6 +21,8 @@
 		<input type="submit" value="提交"/>
 		</div>
 	</form>
-	
+
+<script src="/js/jquery-1.12.3.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
 </body>
 </html>

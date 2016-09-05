@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>用户权限管理</title>
+<meta name="_csrf" th:content="${_csrf.token}" />
+<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+<link th:href="@{/css/common.css}" rel="stylesheet" />
+</head>
+<body>
+	<nav th:replace="fragments/headNav::nav"></nav>
+	<div>
+		<div class="col-md-2">
+			<div th:include="fragments/userManagerLeft::leftmenu"></div>
+		</div>
+		<div class="col-md-10">
+			<span class="glyphicon glyphicon-sort-by-order"></span>
+		</div>
+	</div>
+	
+<script th:src="@{/js/jquery-1.12.3.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+</body>
+</html>

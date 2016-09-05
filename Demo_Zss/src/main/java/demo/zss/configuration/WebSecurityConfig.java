@@ -20,8 +20,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		//@formatter:off
         http
             .authorizeRequests()
-                .antMatchers("/", "/home","/users").permitAll()
-                .antMatchers("/admin/**").hasRole("admin")
+                .antMatchers("/js/**", "/css/**").permitAll()
+                .antMatchers("/user/**").hasRole("/user")
                 .anyRequest().authenticated()
                 .and()
             .formLogin()
@@ -30,6 +30,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
             .logout()
                 .permitAll();
+        http.rememberMe();
     	//@formatter:on
 	}
 

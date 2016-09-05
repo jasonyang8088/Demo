@@ -25,6 +25,8 @@ public class Document {
 	
 	private Integer size;
 	
+	private Byte status;
+	
 	private String docSuffix;
 	
 	private Date createTime;
@@ -108,6 +110,14 @@ public class Document {
 
 	public void setMongoFileId(String mongoFileId) {
 		this.mongoFileId = mongoFileId;
+	}
+
+	public Byte getStatus() {
+		return status;
+	}
+
+	public void setStatus(Byte status) {
+		this.status = status;
 	}
 	
 }

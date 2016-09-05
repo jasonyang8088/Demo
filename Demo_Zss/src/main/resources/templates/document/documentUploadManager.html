@@ -6,13 +6,10 @@
 <meta name="_csrf" th:content="${_csrf.token}" />
 <meta name="_csrf_header" th:content="${_csrf.headerName}" />
 <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
-<script th:src="@{/js/jquery-1.12.3.min.js}"></script>
-<script th:src="@{/js/bootstrap.min.js}"></script>
+<link th:href="@{/css/common.css}" rel="stylesheet" />
 <style>
 .show1 {
-	
 }
-
 .node2 {
 	margin-left: 30px
 }
@@ -36,7 +33,7 @@
 			<div>
 				<input type="file" id="file" onchange="uploadFile();" />
 				<div>
-					<button data-toggle="modal" data-target="#modal1">通过章节知识点关联</button>
+					<button onclick="showmodal1()">通过章节知识点关联</button>
 					<button>只通过知识点关联</button>
 				</div>
 				<form th:object="${document}" th:action="@{/document/addDocument}" method="post">
@@ -49,8 +46,16 @@
 					<div id="specialDiv">
 						<th:block th:fragment="special" th:if="${documentSpecialSpec.id!=null}">
 							<div>
-								<input type="hidden" name="specialId" th:value="${documentSpecialSpec.id}" />
+								<input type="checkbox" class="specialId" name="specialId" th:checked="checked" th:value="${documentSpecialSpec.id}" />
 								<span th:text="${documentSpecialSpec.msg}"></span>
+								<button>删除</button>
+							</div>
+						</th:block>
+						<th:block th:fragment="specialSpecs" th:each="spec:${specialSpecs}">
+							<div>
+								<input type="hidden" name="specialId" th:value="${spec.id}" />
+								<span th:text="${spec.msg}"></span>
+								<button>删除</button>
 							</div>
 						</th:block>
 					</div>
@@ -98,7 +103,7 @@
 								<div>
 									<ul>
 										<th:block th:each="booknode:${booknodes}">
-											<li th:class="'show'+${booknode.depth}">
+											<li th:class="'node'+${booknode.depth}">
 												<input type="checkbox" name="bookNode" th:object="${bookNode}" th:value="${booknode.id}" />
 												<span th:text="${booknode.name}"></span>
 											</li>
@@ -126,8 +131,35 @@
 		<!-- /.modal-content -->
 	</div>
 	<!-- /.modal -->
+	
+	<!-- 模态框（Modal） -->
+	<div class="modal fade" id="ohterRelationmodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel2">请选择适合的其它版本</h4>
+				</div>
+				<div class="modal-body">
+					<th:block id="otherSpec" th:each="otherSpec:${otherSpecs}">
+						<div>
+						<input type="checkbox" name="specialId" th:value="${otherSpec.id}"/><span th:text="${otherSpec.msg}"></span>
+						<button>删除</button>
+						</div>
+					</th:block>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary" onclick="submitModal1();">提交更改</button>
+				</div>
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal -->
 
-</body>
+<script th:src="@{/js/jquery-1.12.3.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
 <script type="text/javascript">
 	$(function() {
 		bindSelect();
@@ -245,8 +277,26 @@
 			},
 			success : function(data) {
 				$("#specialDiv").append(data);
+				$("#modal1").modal('hide');
+				addOtherRelation();
 			}
 		});
 	};
+	function showmodal1(){
+		$("#stageSelectMain").trigger("change");
+		$("#modal1").modal('show');
+	};
+	function addOtherRelation(){
+		var rid=$(".specialId").last().val();
+		$.ajax({
+			url : "/document/addOtherRelation/"+rid,
+			type : "GET",
+			success : function(data) {
+				$("#specialDiv").append(data);
+				alert("请勾选适合的其它版本");
+			}
+		});
+	}
 </script>
+</body>
 </html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>权限控制系统</title>
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+<link th:href="@{/css/signin.css}" rel="stylesheet" />
+</head>
+<body>
+	<form class="form-signin" th:action="@{/login}" method="POST">
+		<div th:if="${param.error}" class="text-danger">您输入的帐号或者密码错误，请重新输入</div>
+		<div th:if="${param.logout}" class="text-success">>您已经注销！</div>
+		<label for="inputUsername" class="sr-only">用户名</label>
+		<input id="inputUsername" class="form-control" name="username" placeholder="请输入您的用户名" required="required"
+			autofocus="autofocus" type="text" />
+		<label for="inputPassword" class="sr-only">密码</label>
+		<input id="inputPassword" class="form-control" name="password" placeholder="请输入您的密码" required="required"
+			type="password" />
+		<div class="checkbox">
+			<label> <input value="remember-me" type="checkbox" /> 记住我
+			</label>
+		</div>
+		<button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+	</form>
+</body>
+</html>

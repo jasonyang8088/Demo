@@ -21,6 +21,12 @@ public class TextBook {
 	
 	private @ManyToOne @JsonIgnore Version version;
 	
+	private Byte status;
+	
+	private Integer orderId;
+	
+	private Integer classId;
+	
 	private @Column(length=20,name="book_name") String bookName;
 	
 	@OneToMany(mappedBy="book")
@@ -56,4 +62,23 @@ public class TextBook {
 	public void setSubject(Subject subject) {
 		this.subject = subject;
 	}
+	public Byte getStatus() {
+		return status;
+	}
+	public void setStatus(Byte status) {
+		this.status = status;
+	}
+	public Integer getOrderId() {
+		return orderId;
+	}
+	public void setOrderId(Integer orderId) {
+		this.orderId = orderId;
+	}
+	public Integer getClassId() {
+		return classId;
+	}
+	public void setClassId(Integer classId) {
+		this.classId = classId;
+	}
+	
 }

@@ -34,6 +34,8 @@ public class BasicKnowledgePointManagerController {
 	@RequestMapping(value = "/basicKnowledgePointManagerIndex", method = RequestMethod.GET)
 	public String toIndex(BasicKnowledgePointManagerSearchForm form, Model model) {
 		logger.info("跳转到基础知识点管理页面");
+		model.addAttribute("navmenu", 1);
+		model.addAttribute("navleft", 6);
 		List<Subject> subjects = new ArrayList<Subject>();
 		List<BasicKnowledgePoint> basicKnowledgePoints=new ArrayList<BasicKnowledgePoint>();
 		if (form.getStage() == null || form.getStage() == 0) {

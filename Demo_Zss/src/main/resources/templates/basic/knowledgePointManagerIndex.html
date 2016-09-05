@@ -6,9 +6,7 @@
 <meta name="_csrf" th:content="${_csrf.token}" />
 <meta name="_csrf_header" th:content="${_csrf.headerName}" />
 <link href="/css/bootstrap.min.css" rel="stylesheet" />
-<script src="/js/jquery-1.12.3.min.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-<script src="/js/jquery.twbsPagination.js"></script>
+<link th:href="@{/css/common.css}" rel="stylesheet" />
 <style>
 .show1{
 
@@ -16,11 +14,14 @@
 .node2{
 	margin-left:30px
 }
-.kp2{
+.kp1{
 	margin-left:30px
 }
-.kp3{
+.kp2{
 	margin-left:60px
+}
+.kp3{
+	margin-left:90px
 }
 </style>
 </head>
@@ -57,7 +58,9 @@
 					<div class="col-md-6">
 						<ul>
 							<th:block th:each="booknode:${booknodes}">
-							<li th:value="${booknode.id}" th:text="${booknode.name}" th:class="'node'+${booknode.depth}"></li>
+							<li>
+							<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+							<span th:value="${booknode.id}" th:text="${booknode.name}" th:class="'node'+${booknode.depth}"></span></li>
 							<ul th:if="!${#lists.isEmpty(booknode.knowledgePoints)}">
 								<li th:each="kp:${booknode.knowledgePoints}" th:text="${kp.name}" th:class="'kp'+${kp.depth}"></li>
 							</ul>
@@ -73,8 +76,10 @@
 			</div>
 		</div>
 	</div>
+<script src="/js/jquery-1.12.3.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.twbsPagination.js"></script>
 
-</body>
 <script type="text/javascript">
 	$(function() {
 		bindSelect();
@@ -104,7 +109,7 @@
 		$("#stageSelectMain").on("change", function() {
 			var stage = $(this).val()
 			$.ajax({
-				url : "/basic/changeTableForBookNodeManager",
+				url : "/basic/changeTableForKnowledgePointManager",
 				type : "GET",
 				data : {
 					stage : stage,
@@ -122,7 +127,7 @@
 			var stage = $("#stageSelectMain").val();
 			var subjectId = $(this).val();
 			$.ajax({
-				url : "/basic/changeTableForBookNodeManager",
+				url : "/basic/changeTableForKnowledgePointManager",
 				type : "GET",
 				data : {
 					stage : stage,
@@ -141,7 +146,7 @@
 			var subjectId = $("#subjectSelectMain").val();
 			var versionId = $("#versionSelectMain").val();
 			$.ajax({
-				url : "/basic/changeTableForBookNodeManager",
+				url : "/basic/changeTableForKnowledgePointManager",
 				type : "GET",
 				data : {
 					stage : stage,
@@ -161,7 +166,7 @@
 			var versionId = $("#versionSelectMain").val();
 			var textBookId = $("#textBookSelectMain").val();
 			$.ajax({
-				url : "/basic/changeTableForBookNodeManager",
+				url : "/basic/changeTableForKnowledgePointManager",
 				type : "GET",
 				data : {
 					stage : stage,
@@ -177,4 +182,5 @@
 		});
 	}
 </script>
+</body>
 </html>

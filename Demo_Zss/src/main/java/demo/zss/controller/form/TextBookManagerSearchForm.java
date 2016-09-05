@@ -8,6 +8,8 @@ public class TextBookManagerSearchForm {
 	
 	private Long versionId;
 	
+	private Integer status;
+	
 
 	public Byte getStage() {
 		return stage;
@@ -33,4 +35,11 @@ public class TextBookManagerSearchForm {
 		this.versionId = versionId;
 	}
 
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
 }

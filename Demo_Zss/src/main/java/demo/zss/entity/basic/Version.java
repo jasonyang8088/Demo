@@ -20,8 +20,14 @@ public class Version implements Comparable<Version>{
 	
 	@Id @GeneratedValue(strategy=GenerationType.AUTO) 
 	private Long id;
+	
 	private @ManyToOne @JoinColumn(name = "subject_id") @JsonIgnore Subject subject;
+	
 	private @Column(length=20,name="version_name")String versionName;
+	
+	private Byte status;
+	
+	private Integer orderId;
 	
 	@OneToMany(mappedBy="version")
 	private List<TextBook> textbooks;
@@ -55,6 +61,18 @@ public class Version implements Comparable<Version>{
 	public int compareTo(Version o) {
 		 Collator instance = Collator.getInstance(Locale.CHINA);
 		 return instance.compare(this.getVersionName(), o.getVersionName());
+	}
+	public Byte getStatus() {
+		return status;
+	}
+	public void setStatus(Byte status) {
+		this.status = status;
+	}
+	public Integer getOrderId() {
+		return orderId;
+	}
+	public void setOrderId(Integer orderId) {
+		this.orderId = orderId;
 	}
 }
  

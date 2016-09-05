@@ -69,6 +69,8 @@ public class konwledgePointManagerController {
 
 	@RequestMapping(value = "/knowledgePointManagerIndex", method = RequestMethod.GET)
 	public String toIndex(BookNodeManagerSearchForm form, Model model) {
+		model.addAttribute("navmenu", 1);
+		model.addAttribute("navleft", 5);
 		List<Subject> subjects = new ArrayList<Subject>();
 		List<Version> versions = new ArrayList<Version>();
 		List<TextBook> textbooks = new ArrayList<TextBook>();
@@ -94,7 +96,7 @@ public class konwledgePointManagerController {
 				form.setTextBookId(textbooks.get(0).getId());
 			}
 		}
-		booknodes = bookNodeRepository.findByBookId(form.getTextBookId());
+		booknodes = bookNodeRepository.findByBookIdOrderByOrderNo(form.getTextBookId());
 		model.addAttribute("subjects", subjects);
 		model.addAttribute("versions", versions);
 		model.addAttribute("textbooks", textbooks);
@@ -126,7 +128,7 @@ public class konwledgePointManagerController {
 				form.setTextBookId(textbooks.get(0).getId());
 			}
 		}
-		booknodes = bookNodeRepository.findByBookId(form.getTextBookId());
+		booknodes = bookNodeRepository.findByBookIdOrderByOrderNo(form.getTextBookId());
 		model.addAttribute("subjects", subjects);
 		model.addAttribute("versions", versions);
 		model.addAttribute("textbooks", textbooks);
@@ -173,7 +175,6 @@ public class konwledgePointManagerController {
 								kp.setTextBook(book);
 								kp.setVersion(book.getVersion());
 								kp.setSubject(book.getSubject());
-								knowledgePointRepository.save(kp);
 								BasicKnowledgePoint bkp = basicKnowledgePointRepository
 										.findBySubjectIdAndName(book.getSubject().getId(), cell.getStringCellValue());
 								if (bkp == null) {
@@ -184,6 +185,8 @@ public class konwledgePointManagerController {
 									bkp.setSubject(book.getSubject());
 									basicKnowledgePointRepository.save(bkp);
 								}
+								kp.setBasicKnowledgePoint(bkp);
+								knowledgePointRepository.save(kp);
 								bkps[0] = bkp;
 							}
 							kps[0] = kp;
@@ -203,7 +206,6 @@ public class konwledgePointManagerController {
 								kp.setParent(kps[0]);
 								kp.setVersion(book.getVersion());
 								kp.setSubject(book.getSubject());
-								knowledgePointRepository.save(kp);
 								BasicKnowledgePoint bkp = basicKnowledgePointRepository
 										.findBySubjectIdAndName(book.getSubject().getId(), cell.getStringCellValue());
 								if (bkp == null) {
@@ -215,6 +217,8 @@ public class konwledgePointManagerController {
 									bkp.setParent(bkps[0]);
 									basicKnowledgePointRepository.save(bkp);
 								}
+								kp.setBasicKnowledgePoint(bkp);
+								knowledgePointRepository.save(kp);
 								bkps[1] = bkp;
 							}
 							kps[1] = kp;
@@ -234,7 +238,6 @@ public class konwledgePointManagerController {
 								kp.setParent(kps[1]);
 								kp.setVersion(book.getVersion());
 								kp.setSubject(book.getSubject());
-								knowledgePointRepository.save(kp);
 								BasicKnowledgePoint bkp = basicKnowledgePointRepository
 										.findBySubjectIdAndName(book.getSubject().getId(), cell.getStringCellValue());
 								if (bkp == null) {
@@ -246,6 +249,8 @@ public class konwledgePointManagerController {
 									bkp.setParent(bkps[1]);
 									basicKnowledgePointRepository.save(bkp);
 								}
+								kp.setBasicKnowledgePoint(bkp);
+								knowledgePointRepository.save(kp);
 								bkps[2] = bkp;
 							}
 							kps[2] = kp;
@@ -265,7 +270,6 @@ public class konwledgePointManagerController {
 								kp.setParent(kps[2]);
 								kp.setVersion(book.getVersion());
 								kp.setSubject(book.getSubject());
-								knowledgePointRepository.save(kp);
 								BasicKnowledgePoint bkp = basicKnowledgePointRepository
 										.findBySubjectIdAndName(book.getSubject().getId(), cell.getStringCellValue());
 								if (bkp == null) {
@@ -277,6 +281,8 @@ public class konwledgePointManagerController {
 									bkp.setParent(bkps[2]);
 									basicKnowledgePointRepository.save(bkp);
 								}
+								kp.setBasicKnowledgePoint(bkp);
+								knowledgePointRepository.save(kp);
 								bkps[3] = bkp;
 							}
 							kps[3] = kp;
@@ -296,7 +302,6 @@ public class konwledgePointManagerController {
 								kp.setParent(kps[3]);
 								kp.setVersion(book.getVersion());
 								kp.setSubject(book.getSubject());
-								knowledgePointRepository.save(kp);
 								BasicKnowledgePoint bkp = basicKnowledgePointRepository
 										.findBySubjectIdAndName(book.getSubject().getId(), cell.getStringCellValue());
 								if (bkp == null) {
@@ -308,6 +313,8 @@ public class konwledgePointManagerController {
 									bkp.setParent(bkps[3]);
 									basicKnowledgePointRepository.save(bkp);
 								}
+								kp.setBasicKnowledgePoint(bkp);
+								knowledgePointRepository.save(kp);
 								bkps[4] = bkp;
 							}
 							kps[4] = kp;

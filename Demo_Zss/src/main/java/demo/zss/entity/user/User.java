@@ -1,6 +1,8 @@
 package demo.zss.entity.user;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,7 +10,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
+import javax.persistence.Transient;
 
 
 @Entity
@@ -25,10 +28,11 @@ public class User {
 	
 	private Integer status;
 	
-	@OneToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.LAZY)
 	private List<Role> roles;
 	
-	
+	@Transient
+	private Set<Authority> authoritys;
 
 	public Long getId() {
 		return id;
@@ -70,4 +74,18 @@ public class User {
 		this.roles = roles;
 	}
 
+	
+	public Set<Authority> getAuthoritys() {
+		Set<Authority> set = new HashSet<Authority>();
+		for(Role r:roles){
+			set.addAll(r.getAuthorities());
+		}
+		return set;
+	}
+
+	public void setAuthoritys(Set<Authority> authoritys) {
+		this.authoritys = authoritys;
+	}
+
+	
 }

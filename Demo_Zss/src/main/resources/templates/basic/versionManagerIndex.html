@@ -5,10 +5,8 @@
 <title>Hello World!</title>
 <meta name="_csrf" th:content="${_csrf.token}" />
 <meta name="_csrf_header" th:content="${_csrf.headerName}" />
-<link href="/css/bootstrap.min.css" rel="stylesheet" />
-<script src="/js/jquery-1.12.3.min.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-<script src="/js/jquery.twbsPagination.js"></script>
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+<link th:href="@{/css/common.css}" rel="stylesheet" />
 </head>
 <body>
 	<nav th:replace="fragments/headNav::nav"></nav>
@@ -20,7 +18,7 @@
 			<div>
 				<button class="btn" data-toggle="modal" data-target="#addModal">新增</button>
 			</div>
-			<table id="table" class="table">
+			<table id="table" class="table table-bordered table-hover table-condensed">
 				<caption>
 					<select id="stageSelectMain" name="stage" th:value="${versionManagerSearchForm.stage}">
 						<option value="0" th:selected="${versionManagerSearchForm.stage==0}">请选择</option>
@@ -34,6 +32,12 @@
 						<option th:remove="all">数学</option>
 						<option th:remove="all">英语</option>
 					</select>
+					<span>请选择版本状态</span>
+					<select id="statusSelectMain">
+						<option value="-1">请选择</option>
+						<option value="0" th:selected="${versionManagerSearchForm.status==0}">失效</option>
+						<option value="1" th:selected="${versionManagerSearchForm.status==1}">正常</option>
+					</select>
 					
 				</caption>
 				<thead>
@@ -41,15 +45,30 @@
 						<th>学段</th>
 						<th>科目</th>
 						<th>版本</th>
+						<th>排序Id</th>
+						<th>状态</th>
 						<th>操作</th>
 					</tr>
 				</thead>
 				<tbody id="tableData">
 					<tr th:each="version:${versions}">
-						<td th:text="${version.subject.stage}">Tanmay</td>
+						<td th:switch="${version.subject.stage}">
+							<span th:case="1">小学</span>
+							<span th:case="2">初中</span>
+							<span th:case="3">高中</span>
+						</td>
 						<td th:text="${version.subject.subjectName}">Bangalore</td>
 						<td th:text="${version.versionName}">Bangalore</td>
-						<td>修改 <a th:href="@{/basic/deleteVersion(id=${version.id})}">删除</a>
+						<td th:text="${version.orderId}">Bangalore</td>
+						<td th:switch="${version.status}">
+							<span th:case="0">失效</span>
+							<span th:case="1">正常</span>
+						</td>
+						<td><button style="border:1px;" th:onclick="|javascript:toUpdate(${version.id})|">修改</button>
+						 <th:block th:switch="${version.status}">
+						<a th:case="0" th:href="@{/basic/activeVersion(id=${version.id})}">激活</a>
+						<a th:case="1" th:href="@{/basic/deleteVersion(id=${version.id})}">失效</a>
+						</th:block>
 						</td>
 					</tr>
 					<tr th:remove="all">
@@ -78,11 +97,12 @@
 				</div>
 				<div class="modal-body">
 					<form id="versionForm" th:object="${version}">
+						<input type="hidden" th:field="*{id}"/>
 						<div class="form-group">
 							<label for="stage">学段</label>
 							<select id="stageSelect" class="form-control" name="stage">
-								<option value="2">初中</option>
-								<option value="3">高中</option>
+								<option value="2" th:selected="${stage==2}">初中</option>
+								<option value="3" th:selected="${stage==3}">高中</option>
 							</select>
 						</div>
 						<div class="form-group">
@@ -94,10 +114,20 @@
 								<option value="2" th:remove="all">数学</option>
 							</select>
 						</div>
-						
 						<div class="form-group">
-							<label for="exampleInputPassword1">版本名称</label>
-							<input type="text" class="form-control" name="versionName" placeholder="请输入版本名称" />
+							<label>版本名称</label>
+							<input type="text" class="form-control" th:field="*{versionName}" placeholder="请输入版本名称" />
+						</div>
+						<div class="from-group">
+						<label>排序Id</label>
+							<input type="text" class="form-control" th:field="*{orderId}"  placeholder="排序Id" />
+						</div>
+						<div class="from-group">
+						<label>状态</label>
+							<select id="subjectSelect" class="form-control" th:field="*{status}">
+								<option value="0">失效</option>
+								<option value="1">正常</option>
+							</select>
 						</div>
 					</form>
 				</div>
@@ -110,10 +140,11 @@
 		</div>
 		<!-- /.modal -->
 	</div>
-</body>
+<script th:src="@{/js/jquery-1.12.3.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/jquery.twbsPagination.js}"></script>
 <script type="text/javascript">
 	$(function() {
-		bindPagination();
 		$("#stageSelect").on("change", function() {
 			var stage = $(this).val()
 			$.ajax({
@@ -128,6 +159,7 @@
 			});
 		});
 		bindSelect();
+		bindPagination();
 
 	});
 	function bindPagination(){
@@ -151,13 +183,15 @@
 	}
 	function bindSelect(){
 		$("#stageSelectMain").on("change", function() {
-			var stage = $(this).val()
+			var stage = $(this).val();
+			var status = $("#statusSelectMain").val();
 			$.ajax({
 				url : "/basic/changeTable",
 				type : "GET",
 				data : {
 					stage : stage,
-					subjectId:0
+					subjectId:0,
+					status:status
 				},
 				success : function(data) {
 					$("#table").replaceWith(data);
@@ -169,12 +203,36 @@
 		$("#subjectSelectMain").on("change", function() {
 			var stage = $("#stageSelectMain").val();
 			var subjectId = $(this).val();
+			var status = $("#statusSelectMain").val();
 			$.ajax({
 				url : "/basic/changeTable",
 				type : "GET",
 				data : {
 					stage : stage,
-					subjectId:subjectId
+					subjectId:subjectId,
+					status:status
+				},
+				success : function(data) {
+					$("#table").replaceWith(data);
+					bindSelect();
+					bindPagination();
+				}
+			});
+		});
+		$("#statusSelectMain").on("change", function() {
+			var stage = $("#stageSelectMain").val();
+			var subjectId = $("#subjectSelectMain").val();
+			var status = $("#statusSelectMain").val();
+			if(subjectId=="请选择"){
+				subjectId=0;
+			}
+			$.ajax({
+				url : "/basic/changeTable",
+				type : "GET",
+				data : {
+					stage : stage,
+					subjectId:subjectId,
+					status:status
 				},
 				success : function(data) {
 					$("#table").replaceWith(data);
@@ -202,5 +260,26 @@
 			}
 		});
 	};
+	function toUpdate(id){
+		$.ajax({
+			url : "/basic/getVersion/"+id,
+			type : "GET",
+			success : function(data) {
+				$("#versionForm").replaceWith(data);
+				$("#addModal").modal("show");
+			}
+		});
+	};
+	function addModal(){
+		$.ajax({
+			url : "/basic/newVersion/",
+			type : "GET",
+			success : function(data) {
+				$("#versionForm").replaceWith(data);
+				$("#addModal").modal("show");
+			}
+		});
+	}
 </script>
+</body>
 </html>

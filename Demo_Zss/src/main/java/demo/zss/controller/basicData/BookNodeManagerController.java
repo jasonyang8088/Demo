@@ -59,7 +59,8 @@ public class BookNodeManagerController {
 
 	@RequestMapping(value = "/bookNodeManagerIndex", method = RequestMethod.GET)
 	public String toIndex(BookNodeManagerSearchForm form, Model model) {
-		System.out.println(form);
+		model.addAttribute("navmenu", 1);
+		model.addAttribute("navleft", 4);
 		List<Subject> subjects = new ArrayList<Subject>();
 		List<Version> versions = new ArrayList<Version>();
 		List<TextBook> textbooks = new ArrayList<TextBook>();
@@ -85,11 +86,12 @@ public class BookNodeManagerController {
 				form.setTextBookId(textbooks.get(0).getId());
 			}
 		}
-		booknodes = bookNodeRepository.findByBookId(form.getTextBookId());
+		booknodes = bookNodeRepository.findByBookIdOrderByOrderNo(form.getTextBookId());
 		model.addAttribute("subjects", subjects);
 		model.addAttribute("versions", versions);
 		model.addAttribute("textbooks", textbooks);
 		model.addAttribute("booknodes", booknodes);
+		model.addAttribute("bookNode", new BookNode());
 		return "/basic/bookNodeManagerIndex";
 	}
 
@@ -117,12 +119,26 @@ public class BookNodeManagerController {
 				form.setTextBookId(textbooks.get(0).getId());
 			}
 		}
-		booknodes = bookNodeRepository.findByBookId(form.getTextBookId());
+		booknodes = bookNodeRepository.findByBookIdOrderByOrderNo(form.getTextBookId());
 		model.addAttribute("subjects", subjects);
 		model.addAttribute("versions", versions);
 		model.addAttribute("textbooks", textbooks);
 		model.addAttribute("booknodes", booknodes);
 		return "/basic/bookNodeManagerIndex::#bookNodeManager";
+	}
+	
+	@RequestMapping(value="getBookNode",method=RequestMethod.GET)
+	public String getBookNode(Long id,Model model){
+		BookNode bookNode=bookNodeRepository.findOne(id);
+		model.addAttribute("bookNode", bookNode);
+		return "/basic/bookNodeManagerIndex::#bookNodeForm";
+	}
+	
+	@RequestMapping(value="addBookNode",method=RequestMethod.POST)
+	@ResponseBody
+	public String addBookNode(BookNode bookNode){
+		bookNodeRepository.save(bookNode);
+		return "success";
 	}
 
 	@RequestMapping(value = "uploadBookNodeFile", method = RequestMethod.POST)
@@ -145,7 +161,13 @@ public class BookNodeManagerController {
 					if (cell == null) {
 						continue;
 					}
+					System.out.println(cell.getStringCellValue());
 					if (cellNum == 0) {
+						BookNode b =array[0];
+						if(b!=null&&cell.getStringCellValue().equals(b.getName())){
+							System.out.println("----"+b.getName());
+							continue;
+						}
 						BookNode booknode = bookNodeRepository.findByBookIdAndNameAndDepth(book.getId(),
 								cell.getStringCellValue(), (byte) 1);
 						if (booknode == null) {
@@ -154,14 +176,19 @@ public class BookNodeManagerController {
 							booknode.setDepth((byte) 1);
 							booknode.setBook(book);
 							booknode.setStatus((byte) 1);
-							bookNodeRepository.save(booknode);
+							bookNodeRepository.saveAndFlush(booknode);
 						}else {
 							booknode.setStatus((byte) 1);
-							bookNodeRepository.save(booknode);
+							bookNodeRepository.saveAndFlush(booknode);
 						}
 						array[0] = booknode;
 					}
 					if (cellNum == 1) {
+						BookNode b =array[1];
+						if(b!=null&&cell.getStringCellValue().equals(b.getName())){
+							System.out.println("----"+b.getName());
+							continue;
+						}
 						BookNode booknode = bookNodeRepository.findByBookIdAndNameAndDepth(book.getId(),
 								cell.getStringCellValue(), (byte) 2);
 						if (booknode == null) {
@@ -171,14 +198,19 @@ public class BookNodeManagerController {
 							booknode.setParent(array[0]);
 							booknode.setBook(book);
 							booknode.setStatus((byte) 1);
-							bookNodeRepository.save(booknode);
+							bookNodeRepository.saveAndFlush(booknode);
 						}else{
 							booknode.setStatus((byte) 1);
-							bookNodeRepository.save(booknode);
+							bookNodeRepository.saveAndFlush(booknode);
 						}
 						array[1] = booknode;
 					}
 					if (cellNum == 2) {
+						BookNode b =array[2];
+						if(b!=null&&cell.getStringCellValue().equals(b.getName())){
+							System.out.println("----"+b.getName());
+							continue;
+						}
 						BookNode booknode = bookNodeRepository.findByBookIdAndNameAndDepth(book.getId(),
 								cell.getStringCellValue(), (byte) 2);
 						if (booknode == null) {
@@ -188,11 +220,12 @@ public class BookNodeManagerController {
 							booknode.setBook(book);
 							booknode.setParent(array[1]);
 							booknode.setStatus((byte) 1);
-							bookNodeRepository.save(booknode);
+							bookNodeRepository.saveAndFlush(booknode);
 						}else{
 							booknode.setStatus((byte) 1);
-							bookNodeRepository.save(booknode);
+							bookNodeRepository.saveAndFlush(booknode);
 						}
+						array[2] = booknode;
 					}
 				}
 			}
@@ -201,6 +234,8 @@ public class BookNodeManagerController {
 		}
 		return "success";
 	}
+	
+	
 
 	public Specification<BookNode> createSpecification(BookNodeManagerSearchForm form) {
 		Specification<BookNode> spec = new Specification<BookNode>() {
@@ -220,5 +255,7 @@ public class BookNodeManagerController {
 		};
 		return spec;
 	}
+	
+	
 
 }

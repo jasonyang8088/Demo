@@ -3,9 +3,10 @@
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
 <title>Hello World!</title>
+<meta name="_csrf" th:content="${_csrf.token}" />
+<meta name="_csrf_header" th:content="${_csrf.headerName}" />
 <link href="/css/bootstrap.min.css" rel="stylesheet" />
-<script src="/js/jquery-1.12.3.min.js"></script>
-<script src="/js/bootstrap.min.js"></script>
+<link th:href="@{/css/common.css}" rel="stylesheet" />
 </head>
 <body>
 	<nav th:replace="fragments/headNav::nav"></nav>
@@ -18,27 +19,43 @@
 			<div>
 				<button class="btn" onclick="clickAddModel();">新增</button>
 			</div>
-			<table id="table" class="table">
+			<table id="table" class="table table-bordered table-hover">
 				<caption>
-					<select id="stageSelectMain" name="stage" th:value="${commonSearchForm.stage}">
-						<option value="0" th:selected="${commonSearchForm.stage==0}">请选择</option>
-						<option value="2" th:selected="${commonSearchForm.stage==2}">初中</option>
-						<option value="3" th:selected="${commonSearchForm.stage==3}">高中</option>
+					<select id="stageSelectMain" name="stage" th:value="${documentListSearchForm.stage}">
+						<option value="0" th:selected="${documentListSearchForm.stage==0}">请选择</option>
+						<option value="2" th:selected="${documentListSearchForm.stage==2}">初中</option>
+						<option value="3" th:selected="${documentListSearchForm.stage==3}">高中</option>
 					</select>
 					<select id="subjectSelectMain">
-						<option th:if="${subjectId}==null" th:value="0">请选择</option>
+						<option value="0" th:value="0" th:if="${documentListSearchForm.subjectId==0||documentListSearchForm.subjectId==null}">请选择</option>
 						<option th:each="subject:${subjects}" th:value="${subject.id}" th:text="${subject.subjectName}"
-						th:selected="${subject.id}==${commonSearchForm.subjectId}">语文</option>
+						th:selected="${subject.id}==${documentListSearchForm.subjectId}">语文</option>
 						<option th:remove="all">数学</option>
 						<option th:remove="all">英语</option>
 					</select>
 					<select id="versionSelectMain">
-						<option th:if="${versionId}==null" th:value="0">请选择</option>
+						<option value="0" th:value="0" th:if="${documentListSearchForm.versionId==0||documentListSearchForm.versionId==null}">请选择</option>
 						<option th:each="version:${versions}" th:value="${version.id}" th:text="${version.versionName}"
-						th:selected="${version.id}==${commonSearchForm.versionId}">语文</option>
-						<option th:remove="all">数学</option>
-						<option th:remove="all">英语</option>
+						th:selected="${version.id}==${documentListSearchForm.versionId}">人教版</option>
+						<option th:remove="all">语文版</option>
+						<option th:remove="all">什么版</option>
 					</select>
+					<select id="textBookSelectMain">
+						<option value="0" th:value="0" th:if="${documentListSearchForm.textBookId==0||documentListSearchForm.textBookId==null}">请选择</option>
+						<option th:each="book:${textBooks}" th:value="${book.id}" th:text="${book.bookName}"
+						th:selected="${book.id==documentListSearchForm.textBookId}">六年级</option>
+						<option th:remove="all">七年级</option>
+						<option th:remove="all">八年级</option>
+					</select>
+					<span><label>请选择文档状态</label>
+					<select id="statusSelectMain">
+						<option value="0"  th:selected="${documentListSearchForm.status==0}">请选择</option>
+						<option value="1"  th:selected="${documentListSearchForm.status==1}">一审中</option>
+						<option value="2"  th:selected="${documentListSearchForm.status==2}">二审中</option>
+						<option value="3"  th:selected="${documentListSearchForm.status==3}">终审中</option>
+						<option value="9"  th:selected="${documentListSearchForm.status==9}">已通过</option>
+					</select>
+					</span>
 				</caption>
 				<thead>
 					<tr>
@@ -46,6 +63,7 @@
 						<th>文档名称</th>
 						<th>文档类型</th>
 						<th>文档大小</th>
+						<th>文档状态</th>
 						<th>上传用户</th>
 						<th>上传时间</th>
 						<th>操作</th>
@@ -57,16 +75,18 @@
 						<td th:text="${doc.name}">Bangalore</td>
 						<td th:text="${doc.docSuffix}">Bangalore</td>
 						<td th:text="${doc.size}">Bangalore</td>
+						<td th:text="${doc.status}">Bangalore</td>
 						<td th:text="${doc.createUser.username}">Bangalore</td>
 						<td th:text="${doc.createTime}">Bangalore</td>
-						<td>查看关联 <a th:href="@{/document/deleteDocument(id=${doc.id})}">删除</a>
+						<td><a th:href="@{/document/download(mongoFileId=${doc.mongoFileId})}">下载</a>查看详情 <a th:href="@{/document/deleteDocument(id=${doc.id})}">删除</a>
 						</td>
 					</tr>
 				</tbody>
 				<tfoot>
 					<tr>
-						<td colspan="4">
+						<td colspan="8">
 							<input id="totalPage" type="hidden" th:value="${totalPage}"/>
+							<span th:text="|总数：${totalNum}|"></span>
 							<ul id="pagination-demo" th:attr="totalPage='${totalPage}'" class="pagination-sm"></ul>
 						</td>
 					</tr>
@@ -75,5 +95,151 @@
 			</div>
 		</div>
 	</div>
+<script src="/js/jquery-1.12.3.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.twbsPagination.js"></script>
+<script type="text/javascript">
+$(function() {
+	bindSelect();
+	bindPagination();
+
+});
+function bindPagination(){
+	var totalPage =$("#totalPage").val();
+	$("#pagination-demo").twbsPagination({
+		totalPages : totalPage,
+		visiblePages : 5,
+		onPageClick : function(event, page) {
+			$.ajax({
+				url : "/document/changeTableDataForDocumentList",
+				type : "GET",
+				data : {
+					page : page
+				},
+				success : function(data) {
+					$("#tableData").replaceWith(data);
+				}
+			});
+		}
+	});
+}
+function bindSelect(){
+	$("#stageSelectMain").on("change", function() {
+		var stage = $(this).val();
+		var status=$("#statusSelectMain").val();
+		$.ajax({
+			url : "/document/changeTableForDocumentList",
+			type : "GET",
+			data : {
+				stage : stage,
+				subjectId:0,
+				versionId:0,
+				textBookId:0,
+				status:status
+			},
+			success : function(data) {
+				$("#table").replaceWith(data);
+				bindSelect();
+				bindPagination();
+			}
+		});
+	});
+	$("#subjectSelectMain").on("change", function() {
+		var stage = $("#stageSelectMain").val();
+		var subjectId = $("#subjectSelectMain").val();
+		var status=$("#statusSelectMain").val();
+		if(subjectId=="请选择"){
+			subjectId=0;
+		}
+		$.ajax({
+			url : "/document/changeTableForDocumentList",
+			type : "GET",
+			data : {
+				stage : stage,
+				subjectId:subjectId,
+				versionId:0,
+				textBookId:0,
+				status:status
+			},
+			success : function(data) {
+				$("#table").replaceWith(data);
+				bindSelect();
+				bindPagination();
+			}
+		});
+	});
+	$("#versionSelectMain").on("change", function() {
+		var stage = $("#stageSelectMain").val();
+		var subjectId = $("#subjectSelectMain").val();
+		var versionId = $("#versionSelectMain").val();
+		var status=$("#statusSelectMain").val();
+		$.ajax({
+			url : "/document/changeTableForDocumentList",
+			type : "GET",
+			data : {
+				stage : stage,
+				subjectId:subjectId,
+				versionId:versionId,
+				textBookId:0,
+				status:status
+			},
+			success : function(data) {
+				$("#table").replaceWith(data);
+				bindSelect();
+				bindPagination();
+			}
+		});
+	});
+	$("#textBookSelectMain").on("change", function() {
+		var stage = $("#stageSelectMain").val();
+		var subjectId = $("#subjectSelectMain").val();
+		var versionId = $("#versionSelectMain").val();
+		var textBookId = $("#textBookSelectMain").val();
+		var status=$("#statusSelectMain").val();
+		$.ajax({
+			url : "/document/changeTableForDocumentList",
+			type : "GET",
+			data : {
+				stage : stage,
+				subjectId:subjectId,
+				versionId:versionId,
+				textBookId:textBookId,
+				status:status
+			},
+			success : function(data) {
+				$("#table").replaceWith(data);
+				bindSelect();
+				bindPagination();
+			}
+		});
+	});
+	$("#statusSelectMain").on("change", function() {
+		var stage = $("#stageSelectMain").val();
+		var subjectId = $("#subjectSelectMain").val();
+		var versionId = $("#versionSelectMain").val();
+		var textBookId = $("#textBookSelectMain").val();
+		var status=$("#statusSelectMain").val();
+		if(subjectId=="请选择"){
+			subjectId=0;
+		};
+		$.ajax({
+			url : "/document/changeTableForDocumentList",
+			type : "GET",
+			data : {
+				stage : stage,
+				subjectId:subjectId,
+				versionId:versionId,
+				textBookId:textBookId,
+				status:status
+			},
+			success : function(data) {
+				$("#table").replaceWith(data);
+				bindSelect();
+				bindPagination();
+			}
+		});
+	});
+}
+</script>
 </body>
 </html>

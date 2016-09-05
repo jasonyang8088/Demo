@@ -4,6 +4,6 @@ import org.springframework.data.repository.CrudRepository;
 
 import demo.zss.entity.mongo.MDocument;
 
-public interface MDocumentRepository extends CrudRepository<MDocument, Long>{
+public interface MDocumentRepository extends CrudRepository<MDocument, String>{
 
 }

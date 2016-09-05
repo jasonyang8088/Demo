@@ -27,6 +27,10 @@ public class DocumentSpecialSpecServiceImpl implements DocumentSpecialSpecServic
 	@Override
 	public DocumentSpecialSpec returnSpecial(DocumentSpecialSpec special) {
 		BookNode bd = special.getBookNode();
+		if(special.getKnowledgePoint()!=null){
+			bd=special.getKnowledgePoint().getBookNode();
+			special.setBasicKnowledgePoint(special.getKnowledgePoint().getBasicKnowledgePoint());
+		}
 		if (bd != null) {
 			if (bd.getDepth() == 3) {
 				special.setBookNode3(bd);

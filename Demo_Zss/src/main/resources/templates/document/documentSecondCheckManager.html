@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>Hello World!</title>
+<meta name="_csrf" th:content="${_csrf.token}" />
+<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+<link th:href="@{/css/common.css}" rel="stylesheet" />
+</head>
+<body>
+	<nav th:replace="fragments/headNav::nav"></nav>
+	<div>
+		<div class="col-md-2">
+			<div th:include="fragments/documentManagerLeft::leftmenu"></div>
+		</div>
+		<div class="col-md-10">
+			<div>
+			<table id="table" class="table table-bordered table-hover">
+				<caption>
+					<select id="stageSelectMain" name="stage" th:value="${documentListSearchForm.stage}">
+						<option value="0" th:selected="${documentListSearchForm.stage==0}">请选择</option>
+						<option value="2" th:selected="${documentListSearchForm.stage==2}">初中</option>
+						<option value="3" th:selected="${documentListSearchForm.stage==3}">高中</option>
+					</select>
+					<select id="subjectSelectMain">
+						<option value="0">请选择</option>
+						<option th:each="subject:${subjects}" th:value="${subject.id}" th:text="${subject.subjectName}"
+						th:selected="${subject.id}==${documentListSearchForm.subjectId}">语文</option>
+						<option th:remove="all">数学</option>
+						<option th:remove="all">英语</option>
+					</select>
+					<select id="versionSelectMain">
+						<option value="0" >请选择</option>
+						<option th:each="version:${versions}" th:value="${version.id}" th:text="${version.versionName}"
+						th:selected="${version.id}==${documentListSearchForm.versionId}">人教版</option>
+						<option th:remove="all">语文版</option>
+						<option th:remove="all">什么版</option>
+					</select>
+					<select id="textBookSelectMain">
+						<option value="0">请选择</option>
+						<option th:each="book:${textBooks}" th:value="${book.id}" th:text="${book.bookName}"
+						th:selected="${book.id==documentListSearchForm.textBookId}">六年级</option>
+						<option th:remove="all">七年级</option>
+						<option th:remove="all">八年级</option>
+					</select>
+				</caption>
+				<thead>
+					<tr>
+						<th>序号</th>
+						<th>文档名称</th>
+						<th>文档类型</th>
+						<th>文档大小</th>
+						<th>文档状态</th>
+						<th>上传用户</th>
+						<th>上传时间</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody id="tableData">
+					<tr th:each="doc:${documents}">
+						<td th:text="${doc.id}">Tanmay</td>
+						<td th:text="${doc.name}">Bangalore</td>
+						<td th:text="${doc.docSuffix}">Bangalore</td>
+						<td th:text="${doc.size}">Bangalore</td>
+						<td th:text="${doc.status}">Bangalore</td>
+						<td th:text="${doc.createUser.username}">Bangalore</td>
+						<td th:text="${doc.createTime}">Bangalore</td>
+						<td><a th:href="@{/document/download(mongoFileId=${doc.mongoFileId})}">下载</a>查看详情 <a th:href="@{/document/passDocument(id=${doc.id})}">通过</a>
+						</td>
+					</tr>
+				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="8">
+							<input id="totalPage" type="hidden" th:value="${totalPage}"/>
+							<span th:text="|总数：${totalNum}|"></span>
+							<ul id="pagination-demo" th:attr="totalPage='${totalPage}'" class="pagination-sm"></ul>
+						</td>
+					</tr>
+				</tfoot>
+			</table>
+			</div>
+		</div>
+	</div>
+<script src="/js/jquery-1.12.3.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.twbsPagination.js"></script>
+<script type="text/javascript">
+$(function() {
+	bindSelect();
+	bindPagination();
+
+});
+function bindPagination(){
+	var totalPage =$("#totalPage").val();
+	$("#pagination-demo").twbsPagination({
+		totalPages : totalPage,
+		visiblePages : 5,
+		onPageClick : function(event, page) {
+			$.ajax({
+				url : "/document/changeTableDataForDocumentSecondCheck",
+				type : "GET",
+				data : {
+					page : page
+				},
+				success : function(data) {
+					$("#tableData").replaceWith(data);
+				}
+			});
+		}
+	});
+}
+function bindSelect(){
+	$("#stageSelectMain").on("change", function() {
+		var stage = $(this).val();
+		$.ajax({
+			url : "/document/changeTableForDocumentSecondCheck",
+			type : "GET",
+			data : {
+				stage : stage,
+				subjectId:0,
+				versionId:0,
+				textBookId:0,
+				status:2
+			},
+			success : function(data) {
+				$("#table").replaceWith(data);
+				bindSelect();
+				bindPagination();
+			}
+		});
+	});
+	$("#subjectSelectMain").on("change", function() {
+		var stage = $("#stageSelectMain").val();
+		var subjectId = $("#subjectSelectMain").val();
+		if(subjectId=="请选择"){
+			subjectId=0;
+		}
+		$.ajax({
+			url : "/document/changeTableForDocumentSecondCheck",
+			type : "GET",
+			data : {
+				stage : stage,
+				subjectId:subjectId,
+				versionId:0,
+				textBookId:0,
+				status:2
+			},
+			success : function(data) {
+				$("#table").replaceWith(data);
+				bindSelect();
+				bindPagination();
+			}
+		});
+	});
+	$("#versionSelectMain").on("change", function() {
+		var stage = $("#stageSelectMain").val();
+		var subjectId = $("#subjectSelectMain").val();
+		var versionId = $("#versionSelectMain").val();
+		$.ajax({
+			url : "/document/changeTableForDocumentSecondCheck",
+			type : "GET",
+			data : {
+				stage : stage,
+				subjectId:subjectId,
+				versionId:versionId,
+				textBookId:0,
+				status:2
+			},
+			success : function(data) {
+				$("#table").replaceWith(data);
+				bindSelect();
+				bindPagination();
+			}
+		});
+	});
+	$("#textBookSelectMain").on("change", function() {
+		var stage = $("#stageSelectMain").val();
+		var subjectId = $("#subjectSelectMain").val();
+		var versionId = $("#versionSelectMain").val();
+		var textBookId = $("#textBookSelectMain").val();
+		$.ajax({
+			url : "/document/changeTableForDocumentSecondCheck",
+			type : "GET",
+			data : {
+				stage : stage,
+				subjectId:subjectId,
+				versionId:versionId,
+				textBookId:textBookId,
+				status:2
+			},
+			success : function(data) {
+				$("#table").replaceWith(data);
+				bindSelect();
+				bindPagination();
+			}
+		});
+	});
+}
+</script>
+</body>
+</html>

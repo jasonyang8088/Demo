@@ -32,6 +32,7 @@ public class BasicDataSubjectController {
 	public String toBasicDataSubject(Model model){
 		List<Subject> subjects=subjectRepository.findAll();
 		model.addAttribute("subjects", subjects);
+		model.addAttribute("navmenu", 1);
 		return "/basic/basicDataIndex";
 	}
 	
