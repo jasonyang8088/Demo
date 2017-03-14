@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>Spring Security Example</title>
+</head>
+<body>
+	<div th:fragment="leftmenu" class="list-group">
+		<a th:href="@{/basic/subjectManagerIndex}" class="list-group-item" th:classappend="${navleft==1}?'active':''">科目管理</a>
+		<a th:href="@{/basic/versionManagerIndex}" class="list-group-item" th:classappend="${navleft==2}?'active':''">版本管理</a>
+		<a th:href="@{/basic/textBookManagerIndex}" class="list-group-item" th:classappend="${navleft==3}?'active':''">教材管理</a>
+		<a th:href="@{/basic/bookNodeManagerIndex}" class="list-group-item" th:classappend="${navleft==4}?'active':''">章节管理</a>
+		<a th:href="@{/basic/knowledgePointManagerIndex}" class="list-group-item" th:classappend="${navleft==5}?'active':''">教材知识点管理</a>
+		<a th:href="@{/basic/basicKnowledgePointManagerIndex}" class="list-group-item" th:classappend="${navleft==6}?'active':''">基础知识点管理</a>
+	</div>
+</body>
+</html>

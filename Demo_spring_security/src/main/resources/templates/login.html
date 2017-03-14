@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>登录</title>
+<meta charset="utf-8" />
+<link href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+<style>
+.login_hd { height: 50px; border-bottom: 1px solid #ccc;}
+.login_hd h1 { margin: 0; line-height: 50px; font-family: "Microsoft Yahei"; font-size: 22px; text-align: center;}
+.login_box { max-width:300px; margin: 130px auto 0; position: relative;}
+.login_box input { width: 300px; padding: 10px; border: 1px solid #e1e6f0; border-radius: 4px; margin-bottom: 15px; }
+.login_box input:focus { outline: none; box-shadow: inset 0 0 6px #ccc; }
+.login_box input.error { box-shadow: inset 0 0 6px #f00; }
+.login_box input[type="submit"] { margin-top: 20px; background-color: #1989fa; color: #fff; }
+.login_box input[type="submit"]:hover { background-color: #0577ea; color: #fff; }
+.logout_tips { text-align: center; line-height: 50px; color: green;}
+@media all and (min-width: 1920px){
+ .login_box { margin-top: 250px; }
+}
+</style>
+</head>
+<body>
+	<!-- <div th:if="${param.error}">Invalid username and password.</div>
+  <div th:if="${param.logout}">You have been logged out.</div> -->
+  <div class="login_hd">
+    <h1>资源管理平台</h1>
+  </div>
+  <div th:if="${param.logout}" class="logout_tips">您已成功退出！</div>
+	<div class="login_box">
+    <form th:action="@{/login}" method="post">
+        <input type="text" name="username" placeholder="用户名" th:class="${param.error}?error:''" />
+        <input type="password" name="password" placeholder="密码" th:class="${param.error}?error:''" />
+        <!-- <div>
+          <label>记住我：<input type="checkbox" name="remember-me" /></label>
+        </div> -->
+        <input type="submit" value="登录" />
+    </form> 
+  </div>
+<script src="../static/js/jquery-1.12.3.min.js" th:src="@{/js/jquery-1.12.3.min.js}"></script>
+<script>
+  var $tips = $(".logout_tips");
+  setTimeout(function(){
+    $tips.slideUp(400);
+  },3000);
+</script>
+</body>
+</html>

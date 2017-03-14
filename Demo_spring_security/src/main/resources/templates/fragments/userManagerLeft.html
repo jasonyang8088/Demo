@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>Spring Security Example</title>
+</head>
+<body>
+	<div th:fragment="leftmenu" class="list-group">
+		<a th:href="@{/user/userListManager}" class="list-group-item" th:classappend="${navleft==1}?'active':''">用户列表</a>
+		<a class="list-group-item" th:href="@{/user/roleManager}" th:classappend="${navleft==2}?'active':''">角色管理</a>
+		<a class="list-group-item" th:href="@{#}" th:classappend="${navleft==3}?'active':''">权限分配</a>
+		<a class="list-group-item" th:href="@{/user/authorityManager}" th:classappend="${navleft==4}?'active':''">权限管理</a>
+	</div>
+</body>
+</html>
