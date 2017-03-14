@@ -2,11 +2,13 @@ package com.jason.config;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 @Configuration
 public class MultiDataSourceConfiguration {
@@ -37,35 +39,16 @@ public class MultiDataSourceConfiguration {
 	    return secondaryDataSourceProperties().initializeDataSourceBuilder().build();
 	}
 	
-//	@Bean(name = "primaryJdbcTemplate")
-//	public JdbcTemplate primaryJdbcTemplate(@Qualifier("primaryDataSource") DataSource primaryDataSource) {
-//		return new JdbcTemplate(primaryDataSource);
-//	}
-//	
-//	@Bean(name = "secondaryJdbcTemplate")
-//	public JdbcTemplate secondaryJdbcTemplate(@Qualifier("secondaryDataSource") DataSource secondaryDataSource) {
-//		return new JdbcTemplate(secondaryDataSource);
-//	}
+	@Bean(name = "primaryJdbcTemplate")
+	public JdbcTemplate primaryJdbcTemplate(@Qualifier("primaryDataSource") DataSource primaryDataSource) {
+		return new JdbcTemplate(primaryDataSource);
+	}
 	
-//	@Bean
-//	public LocalContainerEntityManagerFactoryBean primaryEntityManagerFactory(
-//	        EntityManagerFactoryBuilder builder) {
-//	    return builder
-//	            .dataSource(primaryDataSource())
-//	            .packages(Subject.class)
-//	            .persistenceUnit("jyeoo")
-//	            .build();
-//	}
-//
-//	@Bean
-//	public LocalContainerEntityManagerFactoryBean secondaryEntityManagerFactory(
-//	        EntityManagerFactoryBuilder builder) {
-//		return builder
-//	            .dataSource(secondaryDataSource())
-//	            .packages(Subject2.class)
-//	            .persistenceUnit("koolearn")
-//	            .build();
-//	}
+	@Bean(name = "secondaryJdbcTemplate")
+	public JdbcTemplate secondaryJdbcTemplate(@Qualifier("secondaryDataSource") DataSource secondaryDataSource) {
+		return new JdbcTemplate(secondaryDataSource);
+	}
+	
 	
 
 }
